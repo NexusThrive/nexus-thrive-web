@@ -50,7 +50,7 @@ import Layout from '../layouts/Layout.astro';
 
     margin-bottom: 1.2rem;
 
-    font-family: 'Roboto Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.3em;
@@ -61,7 +61,7 @@ import Layout from '../layouts/Layout.astro';
   .nf-container h1 {
     margin: 0;
 
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-display);
     font-size: clamp(2.2rem, 5vw, 3.4rem);
     font-weight: 500;
     line-height: 1.02;
@@ -73,7 +73,7 @@ import Layout from '../layouts/Layout.astro';
   .nf-text {
     margin: 1.2rem 0 2.2rem;
 
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 1rem;
     line-height: 1.65;
 
@@ -94,7 +94,7 @@ import Layout from '../layouts/Layout.astro';
     background: var(--accent-default);
     color: #050505;
 
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.86rem;
     font-weight: 600;
 

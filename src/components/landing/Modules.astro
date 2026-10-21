@@ -1,0 +1,439 @@
+---
+import ProductShot from './ProductShot.astro';
+import pozon from '../../assets/casapozonmuseo-real.webp';
+import { ALSO_LIVE, AVAILABILITY, MODULES } from '../../data/site';
+
+/** Captura real de cada módulo (si existe en la app). */
+const SHOTS: Record<string, { name: string; alt: string; phone?: string }> = {
+	clientes: { name: 'ficha', alt: 'Ficha 360° de una socia: membresía destacada con vencimiento y días restantes, y resumen de pagos.' },
+	membresias: { name: 'membresias', phone: 'm-membresias', alt: 'Listado de membresías con activas, por vencer, vencidas y valor por cobrar del mes.' },
+	pagos: { name: 'finanzas', alt: 'Finanzas del negocio: resumen de ingresos, gastos y caja.' },
+	acceso: { name: 'acceso', phone: 'm-acceso', alt: 'Control de acceso: el socio puede entrar, tiempo restante y lista de vencimientos.' },
+};
+const STATUS_CLASS = { live: 'status--live', dev: 'status--dev', custom: 'status--custom' } as const;
+---
+
+<section class="section mods" id="soluciones" aria-labelledby="mods-title">
+	<div class="container">
+		<header class="mods-head" data-reveal>
+			<p class="eyebrow">Un sistema, múltiples soluciones</p>
+			<h2 id="mods-title" class="title-lg">Cada módulo resuelve un problema concreto.</h2>
+			<ul class="legend" role="list" aria-label="Estados">
+				<li><span class="status status--live">{AVAILABILITY.live}</span> se usa hoy en la app</li>
+				<li><span class="status status--dev">{AVAILABILITY.dev}</span> planeado, aún no se contrata</li>
+				<li><span class="status status--custom">{AVAILABILITY.custom}</span> lo implementamos por proyecto</li>
+			</ul>
+		</header>
+
+		<div class="mods-body" data-mods>
+			<div class="mods-tabs" role="tablist" aria-label="Módulos de NEXUS" hidden data-tablist>
+				{MODULES.map((m, i) => (
+					<button type="button" role="tab" id={`tab-${m.id}`} aria-controls={`panel-${m.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-tab>
+						<span class="tab-n">{String(i + 1).padStart(2, '0')}</span>
+						<span class="tab-title">{m.title}</span>
+						<span class:list={['tab-dot', STATUS_CLASS[m.status]]} aria-label={AVAILABILITY[m.status]}></span>
+					</button>
+				))}
+			</div>
+
+			<div class="mods-panels">
+				{MODULES.map((m, i) => (
+					<article class:list={['panel', { 'is-active': i === 0 }]} id={`panel-${m.id}`} role="tabpanel" aria-labelledby={`tab-${m.id}`} data-panel data-reveal>
+						<div class="panel-copy">
+							<span class:list={['status', STATUS_CLASS[m.status]]}>{AVAILABILITY[m.status]}</span>
+							<h3 class="title-md">{m.title}</h3>
+							<p class="panel-problem">{m.problem}</p>
+							<ul class="panel-points" role="list">
+								{m.points.map((p) => <li>{p}</li>)}
+							</ul>
+							{m.next && <p class="panel-next"><span class="status status--dev">{AVAILABILITY.dev}</span> {m.next}</p>}
+						</div>
+						<div class="panel-visual">
+							{SHOTS[m.id] ? (
+								<>
+									<ProductShot name={SHOTS[m.id].name} alt={SHOTS[m.id].alt} class:list={[{ 'only-wide': SHOTS[m.id].phone }]} />
+									{SHOTS[m.id].phone && <ProductShot name={SHOTS[m.id].phone!} frame="phone" alt={SHOTS[m.id].alt} class="only-narrow" />}
+								</>
+							) : m.id === 'digital' ? (
+								<figure class="case">
+									<img src={pozon.src} width={pozon.width} height={pozon.height} alt="Sitio web de la Casa Museo El Pozón, construido por NEXUS THRIVE." loading="lazy" decoding="async" class="case-img" />
+									<figcaption>
+										Trabajo real: sitio de la <a href="https://casapozonmuseo.org" target="_blank" rel="noopener">Casa Museo El Pozón</a>.
+									</figcaption>
+								</figure>
+							) : m.id === 'automatizacion' ? (
+								<div class="diagram" aria-hidden="true">
+									<p class="diagram-label">Hoy</p>
+									<p class="diagram-row"><b>Cobro</b><i></i><b>Recibo R-000123</b></p>
+									<p class="diagram-row"><b>Cada día</b><i></i><b>Vencimientos de la semana</b></p>
+									<p class="diagram-row"><b>Vencimiento</b><i></i><b>Mensaje de WhatsApp listo</b></p>
+									<p class="diagram-label">En camino</p>
+									<p class="diagram-row is-next"><b>WhatsApp del negocio</b><i></i><b>Asistente con confirmación</b></p>
+								</div>
+							) : (
+								<div class="diagram" aria-hidden="true">
+									<p class="diagram-label">Por negocio</p>
+									<p class="diagram-row"><b>Datos aislados</b><i></i><b>Roles y permisos</b></p>
+									<p class="diagram-row"><b>Cambios importantes</b><i></i><b>Auditoría</b></p>
+									<p class="diagram-label">Integraciones</p>
+									<p class="diagram-row is-next"><b>Pasarela de pagos</b><i></i><b>WhatsApp Business</b></p>
+								</div>
+							)}
+						</div>
+					</article>
+				))}
+			</div>
+		</div>
+
+		<p class="also" data-reveal>
+			<span class="status status--live">{AVAILABILITY.live}</span>
+			También en la app: {ALSO_LIVE.join(' · ')}.
+		</p>
+	</div>
+</section>
+
+<script>
+	// Pestañas accesibles en escritorio; en móvil (o sin JS) los módulos se leen en lista.
+	const root = document.querySelector<HTMLElement>('[data-mods]');
+	if (root) {
+		const tablist = root.querySelector<HTMLElement>('[data-tablist]')!;
+		const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+		const panels = [...root.querySelectorAll<HTMLElement>('[data-panel]')];
+		const mq = window.matchMedia('(min-width: 900px)');
+
+		const select = (i: number, focus = false) => {
+			tabs.forEach((t, j) => {
+				t.setAttribute('aria-selected', String(i === j));
+				t.tabIndex = i === j ? 0 : -1;
+			});
+			panels.forEach((p, j) => {
+				p.classList.toggle('is-active', i === j);
+				p.hidden = mq.matches && i !== j;
+				if (i === j) p.classList.add('is-in');
+			});
+			if (focus) tabs[i].focus();
+		};
+
+		const apply = () => {
+			tablist.hidden = !mq.matches;
+			root.classList.toggle('is-tabs', mq.matches);
+			if (mq.matches) select(Math.max(0, tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true')));
+			else panels.forEach((p) => (p.hidden = false));
+		};
+
+		tabs.forEach((t, i) => {
+			t.addEventListener('click', () => select(i));
+			t.addEventListener('keydown', (e) => {
+				const k = e.key;
+				if (k === 'ArrowDown' || k === 'ArrowRight') { e.preventDefault(); select((i + 1) % tabs.length, true); }
+				if (k === 'ArrowUp' || k === 'ArrowLeft') { e.preventDefault(); select((i - 1 + tabs.length) % tabs.length, true); }
+				if (k === 'Home') { e.preventDefault(); select(0, true); }
+				if (k === 'End') { e.preventDefault(); select(tabs.length - 1, true); }
+			});
+		});
+		mq.addEventListener('change', apply);
+		apply();
+	}
+</script>
+
+<style>
+	.mods {
+		background: var(--surface);
+		border-block: 1px solid var(--border);
+	}
+
+	.mods-head {
+		display: grid;
+		gap: 1.2rem;
+		max-width: 760px;
+	}
+
+	.legend {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem 1.4rem;
+		list-style: none;
+		font-size: 0.85rem;
+		color: var(--foreground-muted);
+	}
+
+	.legend li {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.mods-body {
+		margin-top: clamp(2.5rem, 5vw, 4rem);
+	}
+
+	.mods-body.is-tabs {
+		display: grid;
+		grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+		gap: clamp(2rem, 4vw, 4rem);
+		align-items: start;
+	}
+
+	.mods-tabs {
+		display: grid;
+		border-top: 1px solid var(--border);
+	}
+
+	.mods-tabs[hidden] {
+		display: none;
+	}
+
+	[role='tab'] {
+		position: relative;
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		align-items: center;
+		gap: 0.9rem;
+		padding: 1rem 0.25rem 1rem 0.9rem;
+		border: 0;
+		border-bottom: 1px solid var(--border);
+		background: transparent;
+		color: var(--foreground-muted);
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+		transition: color var(--d2) var(--ease), background-color var(--d2) var(--ease);
+	}
+
+	[role='tab']::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.7rem;
+		bottom: 0.7rem;
+		width: 3px;
+		background: var(--accent);
+		transform: scaleY(0);
+		transition: transform var(--d3) var(--nx-ease-out);
+	}
+
+	[role='tab']:hover {
+		color: var(--foreground);
+	}
+
+	[role='tab'][aria-selected='true'] {
+		color: var(--foreground);
+		background: var(--surface-muted);
+	}
+
+	[role='tab'][aria-selected='true']::before {
+		transform: scaleY(1);
+	}
+
+	.tab-n {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+	}
+
+	.tab-title {
+		font-weight: 600;
+		font-size: 0.98rem;
+	}
+
+	.tab-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 1px;
+		background: var(--foreground-muted);
+	}
+
+	.tab-dot.status--live {
+		background: var(--success);
+	}
+
+	.tab-dot.status--dev {
+		background: var(--accent);
+	}
+
+	.mods-panels {
+		display: grid;
+		gap: clamp(3rem, 7vw, 5rem);
+	}
+
+	.panel {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+		gap: clamp(1.5rem, 3vw, 3rem);
+		align-items: center;
+	}
+
+	.is-tabs .panel {
+		grid-template-columns: 1fr;
+		gap: 1.8rem;
+	}
+
+	.is-tabs .panel.is-active {
+		animation: panel-in var(--d3) var(--nx-ease-out) both;
+	}
+
+	@keyframes panel-in {
+		from {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+	}
+
+	.panel-copy {
+		display: grid;
+		gap: 0.9rem;
+		justify-items: start;
+	}
+
+	.panel-problem {
+		font-size: 1.05rem;
+		color: var(--foreground-muted);
+	}
+
+	.panel-points {
+		display: grid;
+		gap: 0.5rem;
+		list-style: none;
+	}
+
+	.panel-points li {
+		position: relative;
+		padding-left: 1.3rem;
+		font-size: 0.97rem;
+	}
+
+	.panel-points li::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.55em;
+		width: 8px;
+		height: 8px;
+		background: var(--foreground);
+		clip-path: polygon(45% 0, 100% 0, 55% 100%, 0 100%);
+	}
+
+	.panel-next {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.88rem;
+		color: var(--foreground-muted);
+	}
+
+	.case {
+		margin: 0;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-xl);
+		overflow: hidden;
+		background: var(--surface);
+	}
+
+	.case :global(.case-img) {
+		width: 100%;
+		height: auto;
+	}
+
+	.case figcaption {
+		padding: 0.8rem 1rem;
+		border-top: 1px solid var(--border);
+		font-size: 0.85rem;
+		color: var(--foreground-muted);
+	}
+
+	.diagram {
+		display: grid;
+		gap: 0.6rem;
+		padding: clamp(1.25rem, 3vw, 2rem);
+		border: 1px solid var(--border);
+		border-radius: var(--radius-xl);
+		background: var(--background);
+		font-family: var(--font-mono);
+		font-size: 0.82rem;
+	}
+
+	.diagram-label {
+		margin-top: 0.4rem;
+		font-size: 0.68rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--foreground-muted);
+	}
+
+	.diagram-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr);
+		align-items: center;
+		gap: 0.6rem;
+	}
+
+	.diagram-row b {
+		padding: 0.6rem 0.75rem;
+		border: 1px solid var(--border-strong);
+		border-radius: var(--radius-md);
+		background: var(--surface);
+		font-weight: 500;
+	}
+
+	.diagram-row i {
+		height: 2px;
+		background: var(--foreground);
+	}
+
+	.diagram-row.is-next b {
+		border-style: dashed;
+		color: var(--foreground-muted);
+	}
+
+	.diagram-row.is-next i {
+		background: repeating-linear-gradient(90deg, var(--accent) 0 6px, transparent 6px 10px);
+	}
+
+	.also {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.6rem;
+		margin-top: clamp(3rem, 6vw, 4.5rem);
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--border);
+		font-size: 0.92rem;
+		color: var(--foreground-muted);
+	}
+
+	.panel-visual :global(.only-narrow) {
+		display: none;
+	}
+
+	@media (max-width: 899px) {
+		.panel {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	/* En móvil la captura ancha no se lee: si existe, va la del teléfono. */
+	@media (max-width: 599px) {
+		.panel-visual :global(.only-wide) {
+			display: none;
+		}
+
+		.panel-visual :global(.only-narrow) {
+			display: block;
+			width: min(72vw, 280px);
+			margin-inline: auto;
+		}
+
+		.diagram {
+			font-size: 0.72rem;
+		}
+
+		.diagram-row {
+			grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr);
+			gap: 0.4rem;
+		}
+
+		.diagram-row b {
+			padding: 0.5rem 0.55rem;
+		}
+	}
+</style>

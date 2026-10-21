@@ -1,0 +1,116 @@
+---
+import { OUTCOMES } from '../../data/site';
+---
+
+<section class="section what" aria-labelledby="what-title">
+	<div class="container what-grid">
+		<header class="what-head" data-reveal>
+			<p class="eyebrow">¿Qué es NEXUS?</p>
+			<h2 id="what-title" class="title-lg">
+				El sistema operativo <span class="accent">digital</span> de tu negocio.
+			</h2>
+			<p class="lead">
+				No es una página web ni un CRM aislado. Es una plataforma donde la información, las herramientas y los flujos de trabajo de tu negocio viven juntos, para que operar sea más ordenado cada día.
+			</p>
+		</header>
+
+		<ol class="what-list" role="list">
+			{OUTCOMES.map((o, i) => (
+				<li data-reveal style={`--reveal-delay:${i * 60}ms`}>
+					<span class="what-n">{String(i + 1).padStart(2, '0')}</span>
+					<h3>{o.title}</h3>
+					<p>{o.text}</p>
+				</li>
+			))}
+		</ol>
+	</div>
+</section>
+
+<style>
+	.what {
+		border-top: 1px solid var(--border);
+	}
+
+	.what-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+		gap: clamp(2.5rem, 6vw, 6rem);
+		align-items: start;
+	}
+
+	.what-head {
+		position: sticky;
+		top: calc(var(--nav-h) + 2rem);
+		display: grid;
+		gap: 1.3rem;
+	}
+
+	.accent {
+		color: var(--accent-text);
+	}
+
+	.what-list {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		list-style: none;
+		border-top: 1px solid var(--border);
+	}
+
+	.what-list li {
+		display: grid;
+		gap: 0.55rem;
+		align-content: start;
+		padding: 1.8rem 1.6rem 2rem 0;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.what-list li:nth-child(odd) {
+		border-right: 1px solid var(--border);
+	}
+
+	.what-list li:nth-child(even) {
+		padding-left: 1.6rem;
+		padding-right: 0;
+	}
+
+	.what-n {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--accent-text);
+	}
+
+	.what-list h3 {
+		font-family: var(--font-display);
+		font-size: 1.15rem;
+		font-weight: 700;
+		letter-spacing: -0.015em;
+		line-height: 1.25;
+	}
+
+	.what-list p {
+		font-size: 0.95rem;
+		color: var(--foreground-muted);
+	}
+
+	@media (max-width: 899px) {
+		.what-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.what-head {
+			position: static;
+		}
+	}
+
+	@media (max-width: 599px) {
+		.what-list {
+			grid-template-columns: 1fr;
+		}
+
+		.what-list li,
+		.what-list li:nth-child(even) {
+			padding: 1.5rem 0;
+			border-right: 0;
+		}
+	}
+</style>

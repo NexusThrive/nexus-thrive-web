@@ -1,85 +1,132 @@
+/* ==========================================================================
+   NEXUS THRIVE — Tokens de la landing
+   Fuente: el sistema de marca oficial (`packages/brand/css/tokens.css` del
+   repositorio de la app). Todo sale del logo: bloque negro sólido, esquinas
+   rectas y cortes diagonales. Negro dominante, oro como único acento,
+   radios casi nulos y bordes en lugar de sombras.
+   Proporción: 60 % negro y grafito, 30 % blanco y paper, 10 % oro.
+   ========================================================================== */
+
 :root {
-  /* Layout */
-  /* Margen lateral de TODAS las secciones. Antes cada sección tenía
-     `max-width: 1400px; margin: 0 auto`, que en pantallas anchas dejaba
-     franjas negras a los lados. Ahora el contenido va de borde a borde y
-     este gutter fluido da el aire. Es el único lugar donde se define. */
-  --gutter: clamp(1.5rem, 4vw, 5rem);
+  /* --- Primitivos de marca --- */
+  --nx-ink: #000000;
+  --nx-white: #ffffff;
+  --nx-paper: #f7f6f3;
 
-  /* Backgrounds */
-  --bg-primary: #0008;
-  --bg-deep: #0A0A0A;
-  --bg-surface: #1A1A1A;
+  --nx-gold-100: #f6ebc4;
+  --nx-gold-300: #e6cb74;
+  --nx-gold-500: #d4af37;
+  --nx-gold-600: #b8921f;
+  --nx-gold-700: #7f6210;
 
-  /* Borders */
-  --border-default: #2E2E2E;
-  --border-strong: #3D3D3D;
+  --nx-graphite-950: #0a0a0b;
+  --nx-graphite-900: #141416;
+  --nx-graphite-800: #1e1e21;
+  --nx-graphite-700: #2a2a2e;
+  --nx-graphite-500: #6b6b73;
+  --nx-graphite-400: #a1a1a8;
+  --nx-graphite-200: #e8e6e1;
+  --nx-graphite-100: #f2f1ee;
 
-  /* Text */
-  --text-primary: #FFFFFF;
-  --text-secondary: #A0A0A0;
-  --text-muted: #6B6B6B;
+  --nx-success: #2e7d5b;
 
-  /* Accent (gold — marca: #D4AF37) */
-  --accent-default: #D4AF37;
-  /* Texto y enlaces dorados. En noche es el mismo oro porque sobre negro
-     `#D4AF37` da 7.5:1; en claro NO (da 1.9:1, no lee), y por eso el tema
-     claro lo baja a un dorado oscuro. Toda superficie de texto que use
-     `--accent-default` tiene que usar este en su lugar. */
-  --accent-text: #D4AF37;
-  --accent-hover: #E8C968;
-  --accent-pressed: #A8862B;
+  /* --- Tipografía: Montserrat (la familia geométrica del logo) para
+     títulos, Inter para lectura, JetBrains Mono para datos. --- */
+  --font-display: "Montserrat", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
-  /* Functional states */
-  --state-success: #4ADE80;
-  --state-error: #F87171;
-  --state-info: #60A5FA;
+  /* --- Forma: esquinas casi rectas, como la N --- */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
 
-  /* Sombras y brillos de superficie.
-     En claro no puede ser el mismo negro: una sombra al 45% de negro sobre
-     una card crema se lee como una mancha sucia, no como elevación. */
-  --shadow-card: 0 8px 40px rgba(0, 0, 0, 0.45);
-  --shadow-raise: 0 4px 12px rgba(0, 0, 0, 0.35);
-  --sheen: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  /* --- Movimiento --- */
+  --d1: 120ms;
+  --d2: 200ms;
+  --d3: 320ms;
+  --d4: 640ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --nx-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* El ángulo de la N: cortes y destellos. */
+  --nx-angle: -24deg;
 
-  /* Halo del texto grande del hero y de la "N". En noche es un glow
-     blanco; en claro un halo dorado, porque un glow blanco sobre crema
-     no se ve. */
-  --glow-text: rgba(255, 255, 255, 0.35);
-  --glow-mark: rgba(255, 255, 255, 0.5);
+  /* --- Layout --- */
+  --gutter: clamp(1rem, 4vw, 4rem);
+  --content-max: 1240px;
+  --nav-h: 68px;
+
+  /* --- Semánticos: MODO CLARO (por defecto) --- */
+  --background: var(--nx-paper);
+  --surface: var(--nx-white);
+  --surface-muted: var(--nx-graphite-100);
+  --surface-inverse: var(--nx-ink);
+  --border: var(--nx-graphite-200);
+  --border-strong: #d9d7d1;
+
+  --foreground: var(--nx-graphite-950);
+  --foreground-muted: var(--nx-graphite-500);
+  --foreground-inverse: var(--nx-paper);
+
+  --primary: var(--nx-ink);
+  --primary-foreground: var(--nx-paper);
+  --primary-hover: var(--nx-graphite-800);
+  --accent: var(--nx-gold-500);
+  --accent-hover: var(--nx-gold-600);
+  --accent-foreground: var(--nx-ink);
+  /* El oro nunca es texto sobre claro (≈2:1): para texto se usa el 700. */
+  --accent-text: var(--nx-gold-700);
+  --accent-subtle: var(--nx-gold-100);
+
+  --ring: #8f6f12;
+  --success: var(--nx-success);
+  --success-subtle: #e3f0e9;
+
+  --glass: rgba(247, 246, 243, 0.85);
+  --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shot-shadow: 0 30px 60px -30px rgba(10, 10, 11, 0.28);
+
+  color-scheme: light;
+
+  /* --- Alias de la versión anterior (páginas legales, 404, gracias) --- */
+  --text-primary: var(--foreground);
+  --text-secondary: var(--foreground-muted);
+  --text-muted: var(--foreground-muted);
+  --accent-default: var(--accent);
+  --accent-pressed: var(--accent-hover);
+  --border-default: var(--border);
+  --bg-primary: var(--background);
+  --bg-surface: var(--surface);
 }
 
-/* --- Tema claro ---
-   Se activa con `data-theme="light"` en `<html>`. El atributo lo pone un
-   script en el `<head>` del Layout ANTES del primer paint, para que no
-   haya flash de tema equivocado; si no hay preferencia guardada, se
-   respeta `prefers-color-scheme`. */
-[data-theme='light'] {
-  /* Backgrounds */
-  --bg-primary: #FFFFFF;
-  --bg-deep: #FAF7F0;
-  --bg-surface: #F2EEE3;
+/* --- MODO OSCURO: mismos primitivos, pasos propios (no una inversión) --- */
+[data-theme="dark"] {
+  --background: var(--nx-graphite-950);
+  --surface: var(--nx-graphite-900);
+  --surface-muted: var(--nx-graphite-800);
+  --surface-inverse: var(--nx-ink);
+  --border: var(--nx-graphite-700);
+  --border-strong: #3a3a40;
 
-  /* Borders */
-  --border-default: #E2DED3;
-  --border-strong: #CFC9B8;
+  --foreground: var(--nx-paper);
+  --foreground-muted: var(--nx-graphite-400);
+  --foreground-inverse: var(--nx-graphite-950);
 
-  /* Text */
-  --text-primary: #0A0A0A;
-  --text-secondary: #4A4A4A;
-  --text-muted: #6B6B6B;
+  --primary: var(--nx-paper);
+  --primary-foreground: var(--nx-ink);
+  --primary-hover: #ffffff;
+  /* Sobre negro el oro 500 lee bien (≈10:1). */
+  --accent-text: var(--nx-gold-500);
+  --accent-subtle: #2b2410;
 
-  /* Accent (gold — marca: #D4AF37) */
-  --accent-default: #D4AF37;   /* rellenos y bordes */
-  --accent-text: #8A6D1F;      /* texto y enlaces dorados */
-  --accent-hover: #E8C968;
-  --accent-pressed: #A8862B;
+  --ring: var(--nx-gold-500);
+  --success: #5fbf8f;
+  --success-subtle: #13291e;
 
-  --glow-text: rgba(212, 175, 55, 0.28);
-  --glow-mark: rgba(212, 175, 55, 0.4);
+  --glass: rgba(10, 10, 11, 0.82);
+  --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shot-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.8);
 
-  /* Sombra cálida y suave: en crema el negro al 45% se ve como mancha. */
-  --shadow-card: 0 8px 32px rgba(90, 74, 30, 0.12);
-  --shadow-raise: 0 4px 14px rgba(90, 74, 30, 0.1);
-  --sheen: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  color-scheme: dark;
 }

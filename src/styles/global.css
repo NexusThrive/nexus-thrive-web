@@ -1,22 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Space+Grotesk:wght@300..700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import './fonts.css';
 @import './tokens.css';
-
-@font-face {
-  font-family: 'Public Stunt';
-  src: url('../assets/Fonts/public_stunt/PublicStunt_PERSONAL_USE_ONLY.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Public Stunt';
-  src: url('../assets/Fonts/public_stunt/PublicStuntItalic_PERSONAL_USE_ONLY.otf') format('opentype');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
 
 *,
 *::before,
@@ -27,41 +10,322 @@
 }
 
 html {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: var(--text-primary);
-  background-color: var(--bg-primary);
-  scroll-behavior: smooth;
+  font-family: var(--font-sans);
+  color: var(--foreground);
+  background-color: var(--background);
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Cambio de tema suave, solo en colores (no retrasa nada más). La clase la
+   pone el selector durante el cambio y la quita al terminar. */
+html.theme-switching,
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition: background-color var(--d3) var(--ease), border-color var(--d3) var(--ease), color var(--d3) var(--ease) !important;
 }
 
 body {
   min-height: 100vh;
   line-height: 1.6;
+  overflow-x: clip;
 }
 
-/* Compensar la navbar fija (+banner) al navegar con anclas */
-section[id] {
-  scroll-margin-top: 200px;
-}
-
-@media (max-width: 900px) {
-  section[id] {
-    scroll-margin-top: 115px;
-  }
+/* Compensa la navegación fija al saltar a un ancla. */
+[id] {
+  scroll-margin-top: calc(var(--nav-h) + 16px);
 }
 
 a {
-  /* `--accent-text`, no `--accent-default`: el oro de marca sobre blanco
-     da 1.9:1 y no lee. El token ya trae el dorado oscuro del tema claro. */
   color: var(--accent-text);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color var(--d2) var(--ease);
 }
 
 a:hover {
-  color: var(--accent-pressed);
+  color: var(--foreground);
 }
 
-img {
+img,
+picture,
+svg,
+video {
   max-width: 100%;
   display: block;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--nx-ink);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 1000;
+  padding: 0.6rem 1rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+}
+
+.skip-link:focus {
+  top: 1rem;
+  color: var(--primary-foreground);
+}
+
+/* ---------- Estructura ---------- */
+
+.container {
+  width: 100%;
+  max-width: calc(var(--content-max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: clamp(4.5rem, 10vw, 8.5rem);
+}
+
+/* Eyebrow con el corte diagonal de la N. */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--foreground-muted);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 12px;
+  height: 14px;
+  background: var(--accent);
+  clip-path: polygon(45% 0, 100% 0, 55% 100%, 0 100%);
+}
+
+.title-xl,
+.title-lg,
+.title-md {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  text-wrap: balance;
+  color: var(--foreground);
+}
+
+.title-xl {
+  font-size: clamp(2.6rem, 8.2vw, 7rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.96;
+}
+
+.title-lg {
+  font-size: clamp(2rem, 5vw, 3.6rem);
+}
+
+.title-md {
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.lead {
+  font-size: clamp(1.02rem, 1.4vw, 1.2rem);
+  line-height: 1.6;
+  color: var(--foreground-muted);
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+
+/* Palabra resaltada: bloque oro con texto negro (regla de marca: los
+   bloques dorados llevan texto negro). */
+.mark {
+  display: inline-block;
+  padding: 0 0.14em 0.04em;
+  margin: 0 -0.02em;
+  background: var(--accent);
+  color: var(--nx-ink);
+  border-radius: var(--radius-sm);
+  line-height: 1;
+}
+
+/* ---------- Botones ---------- */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 48px;
+  padding: 0 1.35rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--d2) var(--ease), border-color var(--d2) var(--ease), color var(--d2) var(--ease), transform var(--d1) var(--ease);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn svg {
+  flex: none;
+  transition: transform var(--d2) var(--nx-ease-out);
+}
+
+.btn:hover svg.arrow {
+  transform: translateX(3px);
+}
+
+.btn--primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.btn--primary:hover {
+  background: var(--primary-hover);
+  color: var(--primary-foreground);
+}
+
+.btn--accent {
+  background: var(--accent);
+  color: var(--nx-ink);
+}
+
+.btn--accent:hover {
+  background: var(--accent-hover);
+  color: var(--nx-ink);
+}
+
+.btn--outline {
+  border-color: var(--border-strong);
+  color: var(--foreground);
+  background: transparent;
+}
+
+.btn--outline:hover {
+  border-color: var(--foreground);
+  color: var(--foreground);
+}
+
+.btn--sm {
+  min-height: 40px;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+}
+
+/* ---------- Estados de disponibilidad ---------- */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.22rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: var(--surface-muted);
+  color: var(--foreground);
+}
+
+.status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.status--live::before {
+  background: var(--success);
+}
+
+.status--dev::before {
+  background: var(--accent);
+}
+
+.status--custom::before {
+  background: var(--foreground-muted);
+}
+
+/* ---------- Revelado al hacer scroll ----------
+   Sin JavaScript (o sin soporte) todo se ve: la clase `js` la pone el
+   <head> y el observador marca `.is-in`. Solo transform y opacity: sin
+   saltos de layout. */
+
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity var(--d4) var(--nx-ease-out), transform var(--d4) var(--nx-ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.js [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
