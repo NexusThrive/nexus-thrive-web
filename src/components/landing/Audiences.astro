@@ -1,0 +1,92 @@
+---
+import { AUDIENCES } from '../../data/site';
+---
+
+<section class="section aud" aria-labelledby="aud-title">
+	<div class="container aud-grid">
+		<header class="aud-head" data-reveal>
+			<p class="eyebrow">Para negocios que quieren avanzar</p>
+			<h2 id="aud-title" class="title-lg">Un ecosistema flexible, ajustado a cada caso.</h2>
+			<p class="lead">
+				No todas las industrias tienen hoy un producto terminado. Lo que sí tenemos es una base que se adapta y un método para analizar lo que necesita cada negocio antes de proponer nada.
+			</p>
+		</header>
+
+		<ul class="aud-list" role="list">
+			{AUDIENCES.map((a, i) => (
+				<li data-reveal style={`--reveal-delay:${i * 50}ms`}>
+					<h3>{a.title}</h3>
+					<p>{a.text}</p>
+				</li>
+			))}
+		</ul>
+	</div>
+</section>
+
+<style>
+	.aud {
+		border-top: 1px solid var(--border);
+	}
+
+	.aud-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: clamp(2.5rem, 6vw, 6rem);
+		align-items: start;
+	}
+
+	.aud-head {
+		display: grid;
+		gap: 1.3rem;
+	}
+
+	.aud-list {
+		list-style: none;
+		border-top: 1px solid var(--border);
+	}
+
+	.aud-list li {
+		display: grid;
+		grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+		gap: 1rem;
+		padding: 1.35rem 0;
+		border-bottom: 1px solid var(--border);
+		transition: padding-left var(--d3) var(--nx-ease-out);
+	}
+
+	.aud-list li:hover {
+		padding-left: 0.6rem;
+	}
+
+	.aud-list h3 {
+		font-family: var(--font-display);
+		font-size: 1.1rem;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+		line-height: 1.3;
+	}
+
+	.aud-list p {
+		font-size: 0.94rem;
+		color: var(--foreground-muted);
+	}
+
+	@media (max-width: 899px) {
+		.aud-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 519px) {
+		.aud-list li {
+			grid-template-columns: 1fr;
+			gap: 0.35rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.aud-list li:hover {
+			padding-left: 0;
+		}
+	}
+</style>

@@ -1,0 +1,108 @@
+---
+import { METHOD } from '../../data/site';
+---
+
+<section class="section method" id="metodo" aria-labelledby="method-title">
+	<div class="container">
+		<header class="method-head" data-reveal>
+			<p class="eyebrow">De la necesidad a la solución</p>
+			<h2 id="method-title" class="title-lg">Primero entender el problema. <span class="muted">Después construir la solución.</span></h2>
+		</header>
+
+		<ol class="steps" role="list">
+			{METHOD.map((s, i) => (
+				<li data-reveal style={`--reveal-delay:${i * 80}ms`}>
+					<span class="step-n">{s.n}</span>
+					<span class="step-rule" aria-hidden="true"></span>
+					<h3>{s.title}</h3>
+					<p>{s.text}</p>
+				</li>
+			))}
+		</ol>
+	</div>
+</section>
+
+<style>
+	.method-head {
+		max-width: 900px;
+	}
+
+	.method-head .title-lg {
+		margin-top: 1.2rem;
+	}
+
+	.muted {
+		color: var(--foreground-muted);
+	}
+
+	.steps {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: clamp(1.5rem, 3vw, 2.5rem);
+		margin-top: clamp(3rem, 6vw, 5rem);
+		list-style: none;
+	}
+
+	.steps li {
+		display: grid;
+		gap: 0.8rem;
+		align-content: start;
+	}
+
+	.step-n {
+		font-family: var(--font-display);
+		font-size: clamp(2.6rem, 5vw, 4rem);
+		font-weight: 800;
+		line-height: 1;
+		letter-spacing: -0.04em;
+		color: var(--foreground);
+	}
+
+	.step-rule {
+		position: relative;
+		height: 2px;
+		background: var(--border);
+		overflow: hidden;
+	}
+
+	/* La línea de cada paso se llena al entrar en pantalla. */
+	.step-rule::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--accent);
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform 900ms var(--nx-ease-out);
+		transition-delay: calc(var(--reveal-delay, 0ms) + 200ms);
+	}
+
+	.is-in .step-rule::after,
+	html:not(.js) .step-rule::after {
+		transform: scaleX(1);
+	}
+
+	.steps h3 {
+		font-family: var(--font-display);
+		font-size: 1.2rem;
+		font-weight: 700;
+		letter-spacing: -0.015em;
+	}
+
+	.steps p {
+		font-size: 0.95rem;
+		color: var(--foreground-muted);
+	}
+
+	@media (max-width: 899px) {
+		.steps {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 519px) {
+		.steps {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

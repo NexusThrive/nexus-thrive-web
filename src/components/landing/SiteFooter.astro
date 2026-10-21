@@ -1,0 +1,139 @@
+---
+import Logo from '../brand/Logo.astro';
+import { APP_URL, NAV, SOCIALS, whatsappLink } from '../../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+	<div class="container footer-grid">
+		<div class="footer-brand">
+			<a href="/" class="footer-logo" aria-label="NEXUS THRIVE, inicio">
+				<Logo variant="lockup" size={64} title="NEXUS THRIVE" />
+			</a>
+			<p>Sistema operativo para tu negocio: operación, clientes y procesos conectados en una sola plataforma.</p>
+		</div>
+
+		<nav aria-label="Sitio" class="footer-col">
+			<h2>Sitio</h2>
+			<ul role="list">
+				{NAV.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+				<li><a href="/#gimnasio">Caso gimnasio</a></li>
+			</ul>
+		</nav>
+
+		<nav aria-label="Plataforma" class="footer-col">
+			<h2>Plataforma</h2>
+			<ul role="list">
+				<li><a href={APP_URL} data-cta="app-footer">Entrar a NEXUS</a></li>
+				<li><a href={whatsappLink('Hola NEXUS THRIVE, quiero conocer la plataforma.')} target="_blank" rel="noopener" data-cta="whatsapp-footer">WhatsApp</a></li>
+			</ul>
+		</nav>
+
+		<nav aria-label="Redes sociales" class="footer-col">
+			<h2>Redes</h2>
+			<ul role="list">
+				{SOCIALS.map((s) => <li><a href={s.href} target="_blank" rel="noopener">{s.label}</a></li>)}
+			</ul>
+		</nav>
+	</div>
+
+	<div class="container"><div class="footer-legal">
+		<p>© {year} NEXUS THRIVE</p>
+		<ul role="list">
+			<li><a href="/privacidad">Privacidad</a></li>
+			<li><a href="/terminos">Términos</a></li>
+			<li><a href="/cookies">Cookies</a></li>
+		</ul>
+	</div></div>
+</footer>
+
+<style>
+	.footer {
+		padding-top: clamp(3.5rem, 7vw, 5rem);
+		border-top: 1px solid var(--border);
+		background: var(--background);
+	}
+
+	.footer-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+		gap: 2.5rem;
+	}
+
+	.footer-brand {
+		display: grid;
+		gap: 1.2rem;
+		align-content: start;
+		max-width: 340px;
+	}
+
+	.footer-logo {
+		color: var(--foreground);
+		width: fit-content;
+	}
+
+	.footer-brand p {
+		font-size: 0.92rem;
+		color: var(--foreground-muted);
+	}
+
+	.footer-col h2 {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		font-weight: 500;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--foreground-muted);
+	}
+
+	.footer-col ul {
+		display: grid;
+		gap: 0.55rem;
+		margin-top: 1rem;
+		list-style: none;
+	}
+
+	.footer-col a,
+	.footer-legal a {
+		color: var(--foreground);
+		font-size: 0.93rem;
+	}
+
+	.footer-col a:hover,
+	.footer-legal a:hover {
+		color: var(--accent-text);
+	}
+
+	.footer-legal {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-top: clamp(3rem, 6vw, 4.5rem);
+		padding-block: 1.5rem 5.5rem;
+		border-top: 1px solid var(--border);
+		font-size: 0.85rem;
+		color: var(--foreground-muted);
+	}
+
+	.footer-legal ul {
+		display: flex;
+		gap: 1.25rem;
+		list-style: none;
+	}
+
+	.footer-legal a {
+		font-size: 0.85rem;
+	}
+
+	@media (max-width: 799px) {
+		.footer-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.footer-brand {
+			grid-column: 1 / -1;
+		}
+	}
+</style>
