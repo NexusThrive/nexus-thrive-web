@@ -1,0 +1,365 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/landing/Nav.astro';
+import SiteFooter from '../components/landing/SiteFooter.astro';
+import { APP_URL, whatsappLink } from '../data/site';
+import { HELP_ARTICLES, HELP_FAQ, HELP_INTRO, HELP_SUPPORT } from '../data/help';
+---
+
+<Layout
+	title="Centro de ayuda"
+	description="Guías paso a paso de NEXUS THRIVE: clientes, membresías, pagos, caja, agenda, control de acceso y presencia digital."
+>
+	<Nav />
+	<main id="contenido">
+		<!-- ==================== Portada ==================== -->
+		<section class="help-hero" aria-labelledby="help-title">
+			<div class="container help-hero-inner">
+				<p class="eyebrow" data-reveal>{HELP_INTRO.eyebrow}</p>
+				<h1 id="help-title" class="title-lg" data-reveal>{HELP_INTRO.title}</h1>
+				<p class="lead" data-reveal>{HELP_INTRO.lead}</p>
+				<div class="help-hero-actions" data-reveal>
+					<a href="#guias" class="btn btn--primary">
+						Ver las guías
+						<svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+					</a>
+					<a href={APP_URL} class="btn btn--outline" data-cta="app-help">Entrar a la plataforma</a>
+				</div>
+			</div>
+		</section>
+
+		<!-- ==================== Guías ==================== -->
+		<section class="section help-guides" id="guias" aria-labelledby="guias-title">
+			<div class="container">
+				<header class="help-head" data-reveal>
+					<p class="eyebrow">Guías</p>
+					<h2 id="guias-title" class="title-md">Lo que la plataforma hace hoy</h2>
+					<p class="lead">
+						Cada guía explica el camino dentro de la app. Si algo no coincide con lo que ves en
+						tu pantalla, escríbenos: la app cambia con cada versión.
+					</p>
+				</header>
+
+				<ul class="help-list" role="list">
+					{HELP_ARTICLES.map((article, i) => (
+						<li data-reveal style={`--reveal-delay:${i * 50}ms`}>
+							<a href={`#${article.slug}`} class="help-card">
+								<h3>{article.title}</h3>
+								<p>{article.summary}</p>
+								{article.where ? <span class="help-where">{article.where}</span> : null}
+							</a>
+						</li>
+					))}
+				</ul>
+			</div>
+		</section>
+
+		<!-- ==================== Detalle de cada guía ==================== -->
+		{HELP_ARTICLES.map((article) => (
+			<section class="section help-article" id={article.slug} aria-labelledby={`${article.slug}-title`}>
+				<div class="container help-article-inner">
+					<header data-reveal>
+						<p class="eyebrow">Guía</p>
+						<h2 id={`${article.slug}-title`} class="title-md">{article.title}</h2>
+						<p class="lead">{article.summary}</p>
+					</header>
+					<div class="help-body">
+						<ol class="help-steps" role="list">
+							{article.steps.map((step) => (
+								<li>{step}</li>
+							))}
+						</ol>
+						{article.notes && article.notes.length > 0 ? (
+							<div class="help-notes">
+								<h3>Preguntas frecuentes</h3>
+								<dl>
+									{article.notes.map((note) => (
+										<div>
+											<dt>{note.q}</dt>
+											<dd>{note.a}</dd>
+										</div>
+									))}
+								</dl>
+							</div>
+						) : null}
+					</div>
+				</div>
+			</section>
+		))}
+
+		<!-- ==================== Preguntas frecuentes ==================== -->
+		<section class="section help-faq" aria-labelledby="faq-title">
+			<div class="container help-faq-inner">
+				<header data-reveal>
+					<p class="eyebrow">Preguntas frecuentes</p>
+					<h2 id="faq-title" class="title-md">Lo que más nos preguntan</h2>
+				</header>
+				<dl class="help-faq-list" data-reveal>
+					{HELP_FAQ.map((item) => (
+						<div>
+							<dt>{item.q}</dt>
+							<dd>{item.a}</dd>
+						</div>
+					))}
+				</dl>
+			</div>
+		</section>
+
+		<!-- ==================== Soporte ==================== -->
+		<section class="help-support" aria-labelledby="support-title">
+			<div class="container help-support-inner" data-reveal>
+				<div>
+					<h2 id="support-title" class="title-md">{HELP_SUPPORT.title}</h2>
+					<p class="lead">{HELP_SUPPORT.text}</p>
+				</div>
+				<a
+					href={whatsappLink('Hola NEXUS THRIVE, tengo una duda sobre el centro de ayuda.')}
+					class="btn btn--accent"
+					target="_blank"
+					rel="noopener"
+					data-cta="whatsapp-help"
+				>
+					Escríbenos por WhatsApp
+					<svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+				</a>
+			</div>
+		</section>
+	</main>
+	<SiteFooter />
+</Layout>
+
+<style>
+	/* ---------- Portada ---------- */
+	.help-hero {
+		padding-top: clamp(3rem, 8vw, 6rem);
+		padding-bottom: clamp(2.5rem, 6vw, 4.5rem);
+		border-bottom: 1px solid var(--border);
+	}
+
+	.help-hero-inner {
+		display: grid;
+		gap: 1.3rem;
+		max-width: 70ch;
+	}
+
+	.help-hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin-top: 0.5rem;
+	}
+
+	/* ---------- Guías ---------- */
+	.help-head {
+		display: grid;
+		gap: 1rem;
+		max-width: 62ch;
+		margin-bottom: clamp(2rem, 4vw, 3.5rem);
+	}
+
+	.help-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		gap: 1px;
+		list-style: none;
+		background: var(--border);
+		border: 1px solid var(--border);
+	}
+
+	.help-list li {
+		background: var(--surface);
+	}
+
+	.help-card {
+		display: grid;
+		gap: 0.55rem;
+		align-content: start;
+		height: 100%;
+		padding: 1.6rem 1.5rem 1.8rem;
+		color: inherit;
+		transition: background-color var(--d2) var(--ease);
+	}
+
+	.help-card:hover {
+		background: var(--surface-muted);
+		color: inherit;
+	}
+
+	.help-card h3 {
+		font-family: var(--font-display);
+		font-size: 1.08rem;
+		font-weight: 700;
+		letter-spacing: -0.015em;
+		line-height: 1.25;
+	}
+
+	.help-card p {
+		font-size: 0.92rem;
+		color: var(--foreground-muted);
+	}
+
+	.help-where {
+		font-family: var(--font-mono);
+		font-size: 0.7rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--accent-text);
+	}
+
+	/* ---------- Detalle ---------- */
+	.help-article {
+		border-top: 1px solid var(--border);
+		scroll-margin-top: calc(var(--nav-h) + 16px);
+	}
+
+	.help-article-inner {
+		display: grid;
+		grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+		gap: clamp(2rem, 5vw, 4.5rem);
+		align-items: start;
+	}
+
+	.help-article header {
+		display: grid;
+		gap: 0.9rem;
+		position: sticky;
+		top: calc(var(--nav-h) + 2rem);
+	}
+
+	.help-body {
+		display: grid;
+		gap: 2rem;
+	}
+
+	.help-steps {
+		display: grid;
+		gap: 0.9rem;
+		list-style: none;
+		counter-reset: paso;
+	}
+
+	.help-steps li {
+		counter-increment: paso;
+		position: relative;
+		padding-left: 2.4rem;
+		font-size: 0.98rem;
+		line-height: 1.65;
+	}
+
+	.help-steps li::before {
+		content: counter(paso, decimal-leading-zero);
+		position: absolute;
+		left: 0;
+		top: 0.1rem;
+		font-family: var(--font-mono);
+		font-size: 0.78rem;
+		color: var(--accent-text);
+	}
+
+	.help-notes {
+		border-top: 1px solid var(--border);
+		padding-top: 1.5rem;
+		display: grid;
+		gap: 1rem;
+	}
+
+	.help-notes h3 {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		font-weight: 500;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--foreground-muted);
+	}
+
+	.help-notes dl {
+		display: grid;
+		gap: 0.9rem;
+	}
+
+	.help-notes dt {
+		font-weight: 600;
+		font-size: 0.95rem;
+	}
+
+	.help-notes dd {
+		margin: 0.25rem 0 0;
+		font-size: 0.93rem;
+		color: var(--foreground-muted);
+	}
+
+	/* ---------- Preguntas frecuentes ---------- */
+	.help-faq {
+		border-top: 1px solid var(--border);
+	}
+
+	.help-faq-inner {
+		display: grid;
+		grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+		gap: clamp(2rem, 5vw, 4rem);
+		align-items: start;
+	}
+
+	.help-faq-inner header {
+		display: grid;
+		gap: 0.9rem;
+	}
+
+	.help-faq-list {
+		display: grid;
+		gap: 1.4rem;
+	}
+
+	.help-faq-list dt {
+		font-family: var(--font-display);
+		font-size: 1.02rem;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+	}
+
+	.help-faq-list dd {
+		margin: 0.3rem 0 0;
+		font-size: 0.95rem;
+		color: var(--foreground-muted);
+	}
+
+	/* ---------- Soporte ---------- */
+	.help-support {
+		background: var(--nx-ink);
+		color: var(--nx-paper);
+		padding-block: clamp(3.5rem, 8vw, 6rem);
+	}
+
+	.help-support-inner {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 2rem;
+	}
+
+	.help-support h2 {
+		color: var(--nx-paper);
+	}
+
+	.help-support .lead {
+		color: var(--nx-graphite-400);
+	}
+
+	@media (max-width: 899px) {
+		.help-article-inner,
+		.help-faq-inner {
+			grid-template-columns: 1fr;
+		}
+
+		.help-article header {
+			position: static;
+		}
+	}
+
+	@media (max-width: 599px) {
+		.help-hero-actions .btn {
+			flex: 1 1 100%;
+		}
+	}
+</style>
