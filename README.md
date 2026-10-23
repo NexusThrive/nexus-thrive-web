@@ -27,7 +27,7 @@
 
 <p align="center">
   <img
-    src="src/assets/product/inicio-light.webp"
+    src="src/assets/product/screenshot-2026-10-23_12-52-04.png"
     alt="Inicio de un negocio en NEXUS: ingresos, socios activos, gastos, balance y gráfico de ingresos y gastos de la semana."
     width="100%"
   >
