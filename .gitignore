@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # transcripciones de sesiones (ruido, no va al repo)
 conversations/
+
+# graphify: grafo de conocimiento generado (graphify update .)
+graphify-out/
