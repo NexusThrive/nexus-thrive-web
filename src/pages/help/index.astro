@@ -1,0 +1,117 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/landing/Nav.astro';
+import SiteFooter from '../../components/landing/SiteFooter.astro';
+import { APP_URL, whatsappLink } from '../../data/site';
+import { HELP_ARTICLES, HELP_FAQ, HELP_INTRO, HELP_SECTIONS, HELP_SUPPORT, articlesIn } from '../../data/help';
+import '../../styles/help.css';
+
+const slugs = HELP_ARTICLES.map((a) => a.slug);
+---
+
+<Layout
+	title="Centro de ayuda"
+	description="Guías paso a paso de NEXUS THRIVE: cómo está organizada la app, clientes, membresías, agenda, control de acceso, cobros, caja, equipo y presencia digital."
+>
+	<Nav />
+	<main id="contenido">
+		<!-- ==================== Portada ==================== -->
+		<section class="help-hero" aria-labelledby="help-title">
+			<div class="container help-hero-inner">
+				<p class="eyebrow" data-reveal>{HELP_INTRO.eyebrow}</p>
+				<h1 id="help-title" class="title-lg" data-reveal>{HELP_INTRO.title}</h1>
+				<p class="lead" data-reveal>{HELP_INTRO.lead}</p>
+				<div class="help-hero-actions" data-reveal>
+					<a href="/help/como-esta-organizada" class="btn btn--primary">
+						Empieza aquí
+						<svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+					</a>
+					<a href={APP_URL} class="btn btn--outline" data-cta="app-help">Entrar a la plataforma</a>
+				</div>
+			</div>
+		</section>
+
+		<!-- ==================== Guías por sección ==================== -->
+		<section class="section help-guides" id="guias" aria-labelledby="guias-title">
+			<div class="container">
+				<header class="help-head" data-reveal>
+					<p class="eyebrow">Guías</p>
+					<h2 id="guias-title" class="title-md">Lo que la plataforma hace hoy</h2>
+					<p class="lead">
+						Ordenadas como el menú de la app. Cada guía dice para qué sirve, qué necesitas antes,
+						los pasos, qué deberías ver al terminar y cómo resolver los errores más comunes.
+					</p>
+				</header>
+
+				{HELP_SECTIONS.map((section) => {
+					const articles = articlesIn(section.id);
+					return articles.length > 0 ? (
+						<section class="help-section" aria-labelledby={`seccion-${section.id}`}>
+							<div class="help-section-head">
+								<h3 id={`seccion-${section.id}`}>{section.title}</h3>
+								<p>{section.summary}</p>
+							</div>
+							<ul class="help-list" role="list">
+								{articles.map((article) => (
+									<li>
+										<a href={`/help/${article.slug}`} class="help-card">
+											<h4 class="help-card-title">{article.title}</h4>
+											<p>{article.summary}</p>
+											<span class="help-where">{article.where}</span>
+										</a>
+									</li>
+								))}
+							</ul>
+						</section>
+					) : null;
+				})}
+			</div>
+		</section>
+
+		<!-- ==================== Preguntas frecuentes ==================== -->
+		<section class="section help-faq" aria-labelledby="faq-title">
+			<div class="container help-faq-inner">
+				<header data-reveal>
+					<p class="eyebrow">Preguntas frecuentes</p>
+					<h2 id="faq-title" class="title-md">Lo que más nos preguntan</h2>
+				</header>
+				<dl class="help-faq-list" data-reveal>
+					{HELP_FAQ.map((item) => (
+						<div>
+							<dt>{item.q}</dt>
+							<dd>{item.a}</dd>
+						</div>
+					))}
+				</dl>
+			</div>
+		</section>
+
+		<!-- ==================== Soporte ==================== -->
+		<section class="help-support" aria-labelledby="support-title">
+			<div class="container help-support-inner" data-reveal>
+				<div>
+					<h2 id="support-title" class="title-md">{HELP_SUPPORT.title}</h2>
+					<p class="lead">{HELP_SUPPORT.text}</p>
+				</div>
+				<a
+					href={whatsappLink('Hola NEXUS THRIVE, tengo una duda sobre el centro de ayuda.')}
+					class="btn btn--accent"
+					target="_blank"
+					rel="noopener"
+					data-cta="whatsapp-help"
+				>
+					Escríbenos por WhatsApp
+					<svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+				</a>
+			</div>
+		</section>
+	</main>
+	<SiteFooter />
+</Layout>
+
+<!-- Enlaces viejos (/help#clientes) llevan a la página de la guía. -->
+<script is:inline define:vars={{ slugs }}>
+	const slug = decodeURIComponent(location.hash.slice(1));
+	if (slugs.includes(slug)) location.replace(`/help/${slug}`);
+</script>
+

@@ -1,0 +1,139 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/landing/Nav.astro';
+import SiteFooter from '../../components/landing/SiteFooter.astro';
+import ProductShot from '../../components/landing/ProductShot.astro';
+import { whatsappLink } from '../../data/site';
+import { HELP_ARTICLES, HELP_SECTIONS, HELP_SUPPORT, articleBySlug, type HelpArticle } from '../../data/help';
+import '../../styles/help.css';
+
+export function getStaticPaths() {
+	return HELP_ARTICLES.map((article) => ({ params: { slug: article.slug } }));
+}
+
+const { slug } = Astro.params;
+const article = articleBySlug(slug!) as HelpArticle;
+const section = HELP_SECTIONS.find((s) => s.id === article.section)!;
+const index = HELP_ARTICLES.indexOf(article);
+const prev = HELP_ARTICLES[index - 1];
+const next = HELP_ARTICLES[index + 1];
+const related = (article.related ?? []).map(articleBySlug).filter((a): a is HelpArticle => Boolean(a));
+---
+
+<Layout title={`${article.title} · Centro de ayuda`} description={article.summary}>
+	<Nav />
+	<main id="contenido">
+		<article class="section help-guide" aria-labelledby="guia-title">
+			<div class="container">
+				<nav aria-label="Ruta" class="help-crumbs">
+					<a href="/help">Centro de ayuda</a>
+					<span aria-hidden="true">/</span>
+					<span>{section.title}</span>
+				</nav>
+
+				<header class="help-guide-head">
+					<p class="eyebrow">Guía</p>
+					<h1 id="guia-title" class="title-lg">{article.title}</h1>
+					<p class="lead">{article.summary}</p>
+					<span class="help-where">{article.where}</span>
+				</header>
+
+				<div class="help-guide-grid">
+					<div>
+						{article.prerequisites && article.prerequisites.length > 0 ? (
+							<section class="help-block" aria-labelledby="antes">
+								<h2 id="antes">Antes de empezar</h2>
+								<ul class="help-pre">
+									{article.prerequisites.map((item) => <li>{item}</li>)}
+								</ul>
+							</section>
+						) : null}
+
+						<section class="help-block" aria-labelledby="pasos">
+							<h2 id="pasos">Paso a paso</h2>
+							<ol class="help-steps" role="list">
+								{article.steps.map((step) => <li>{step}</li>)}
+							</ol>
+						</section>
+
+						{article.result ? (
+							<section class="help-block" aria-labelledby="resultado">
+								<h2 id="resultado">Qué deberías ver</h2>
+								<p class="help-result">{article.result}</p>
+							</section>
+						) : null}
+
+						{article.notes && article.notes.length > 0 ? (
+							<section class="help-block help-notes" aria-labelledby="errores">
+								<h2 id="errores">Si algo no sale</h2>
+								<dl>
+									{article.notes.map((note) => (
+										<div>
+											<dt>{note.q}</dt>
+											<dd>{note.a}</dd>
+										</div>
+									))}
+								</dl>
+							</section>
+						) : null}
+
+						{related.length > 0 ? (
+							<section class="help-block" aria-labelledby="relacionadas">
+								<h2 id="relacionadas">Guías relacionadas</h2>
+								<ul class="help-related">
+									{related.map((r) => (
+										<li>
+											<a href={`/help/${r.slug}`}>{r.title}</a>
+										</li>
+									))}
+								</ul>
+							</section>
+						) : null}
+					</div>
+
+					{article.shot ? (
+						<div class="help-figure">
+							<ProductShot name={article.shot.name} alt={article.shot.alt} sizes="(min-width: 900px) 520px, 100vw" />
+							<p class="help-caption">{article.shot.caption} Captura real de la app con datos de demostración.</p>
+						</div>
+					) : null}
+				</div>
+
+				<nav class="help-pager" aria-label="Otras guías">
+					{prev ? (
+						<a href={`/help/${prev.slug}`}>
+							<small>Anterior</small>
+							<b>{prev.title}</b>
+						</a>
+					) : null}
+					{next ? (
+						<a href={`/help/${next.slug}`} class="next">
+							<small>Siguiente</small>
+							<b>{next.title}</b>
+						</a>
+					) : null}
+				</nav>
+			</div>
+		</article>
+
+		<section class="help-support" aria-labelledby="support-title">
+			<div class="container help-support-inner">
+				<div>
+					<h2 id="support-title" class="title-md">{HELP_SUPPORT.title}</h2>
+					<p class="lead">{HELP_SUPPORT.text}</p>
+				</div>
+				<a
+					href={whatsappLink(`Hola NEXUS THRIVE, tengo una duda con la guía "${article.title}".`)}
+					class="btn btn--accent"
+					target="_blank"
+					rel="noopener"
+					data-cta="whatsapp-help"
+				>
+					Escríbenos por WhatsApp
+					<svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+				</a>
+			</div>
+		</section>
+	</main>
+	<SiteFooter />
+</Layout>

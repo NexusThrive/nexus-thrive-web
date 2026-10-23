@@ -1,0 +1,381 @@
+/* Centro de ayuda (/help y /help/<guía>). */
+/* ---------- Portada ---------- */
+.help-hero {
+	padding-top: clamp(3rem, 8vw, 6rem);
+	padding-bottom: clamp(2.5rem, 6vw, 4.5rem);
+	border-bottom: 1px solid var(--border);
+}
+
+.help-hero-inner {
+	display: grid;
+	gap: 1.3rem;
+	max-width: 70ch;
+}
+
+.help-hero-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin-top: 0.5rem;
+}
+
+/* ---------- Guías ---------- */
+.help-head {
+	display: grid;
+	gap: 1rem;
+	max-width: 62ch;
+	margin-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
+.help-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 1px;
+	list-style: none;
+	background: var(--border);
+	border: 1px solid var(--border);
+}
+
+.help-list li {
+	background: var(--surface);
+}
+
+.help-card {
+	display: grid;
+	gap: 0.55rem;
+	align-content: start;
+	height: 100%;
+	padding: 1.6rem 1.5rem 1.8rem;
+	color: inherit;
+	transition: background-color var(--d2) var(--ease);
+}
+
+.help-card:hover {
+	background: var(--surface-muted);
+	color: inherit;
+}
+
+.help-card-title {
+	font-family: var(--font-display);
+	font-size: 1.08rem;
+	font-weight: 700;
+	letter-spacing: -0.015em;
+	line-height: 1.25;
+}
+
+.help-card p {
+	font-size: 0.92rem;
+	color: var(--foreground-muted);
+}
+
+.help-where {
+	font-family: var(--font-mono);
+	font-size: 0.7rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--accent-text);
+}
+
+/* ---------- Detalle ---------- */
+.help-body {
+	display: grid;
+	gap: 2rem;
+}
+
+.help-steps {
+	display: grid;
+	gap: 0.9rem;
+	list-style: none;
+	counter-reset: paso;
+}
+
+.help-steps li {
+	counter-increment: paso;
+	position: relative;
+	padding-left: 2.4rem;
+	font-size: 0.98rem;
+	line-height: 1.65;
+}
+
+.help-steps li::before {
+	content: counter(paso, decimal-leading-zero);
+	position: absolute;
+	left: 0;
+	top: 0.1rem;
+	font-family: var(--font-mono);
+	font-size: 0.78rem;
+	color: var(--accent-text);
+}
+
+.help-notes {
+	border-top: 1px solid var(--border);
+	padding-top: 1.5rem;
+	display: grid;
+	gap: 1rem;
+}
+
+.help-notes h3 {
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	font-weight: 500;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--foreground-muted);
+}
+
+.help-notes dl {
+	display: grid;
+	gap: 0.9rem;
+}
+
+.help-notes dt {
+	font-weight: 600;
+	font-size: 0.95rem;
+}
+
+.help-notes dd {
+	margin: 0.25rem 0 0;
+	font-size: 0.93rem;
+	color: var(--foreground-muted);
+}
+
+/* ---------- Preguntas frecuentes ---------- */
+.help-faq {
+	border-top: 1px solid var(--border);
+}
+
+.help-faq-inner {
+	display: grid;
+	grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+	gap: clamp(2rem, 5vw, 4rem);
+	align-items: start;
+}
+
+.help-faq-inner header {
+	display: grid;
+	gap: 0.9rem;
+}
+
+.help-faq-list {
+	display: grid;
+	gap: 1.4rem;
+}
+
+.help-faq-list dt {
+	font-family: var(--font-display);
+	font-size: 1.02rem;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+}
+
+.help-faq-list dd {
+	margin: 0.3rem 0 0;
+	font-size: 0.95rem;
+	color: var(--foreground-muted);
+}
+
+/* ---------- Soporte ---------- */
+.help-support {
+	background: var(--nx-ink);
+	color: var(--nx-paper);
+	padding-block: clamp(3.5rem, 8vw, 6rem);
+}
+
+.help-support-inner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 2rem;
+}
+
+.help-support h2 {
+	color: var(--nx-paper);
+}
+
+.help-support .lead {
+	color: var(--nx-graphite-400);
+}
+
+@media (max-width: 899px) {
+	.help-faq-inner {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 599px) {
+	.help-hero-actions .btn {
+		flex: 1 1 100%;
+	}
+}
+
+/* ---------- Secciones del índice ---------- */
+.help-section + .help-section {
+	margin-top: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+.help-section-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 0.4rem 1rem;
+	margin-bottom: 1rem;
+}
+
+.help-section-head h3 {
+	font-family: var(--font-display);
+	font-size: 1.2rem;
+	font-weight: 700;
+	letter-spacing: -0.015em;
+}
+
+.help-section-head p {
+	font-size: 0.92rem;
+	color: var(--foreground-muted);
+}
+
+.help-card:focus-visible {
+	outline: 2px solid var(--ring, var(--accent-text));
+	outline-offset: -2px;
+}
+
+/* ---------- Página de una guía ---------- */
+.help-crumbs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+	font-size: 0.85rem;
+	color: var(--foreground-muted);
+}
+
+.help-crumbs a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.help-guide {
+	padding-top: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.help-guide-head {
+	display: grid;
+	gap: 1rem;
+	max-width: 70ch;
+	margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.help-guide-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+	gap: clamp(2rem, 5vw, 4.5rem);
+	align-items: start;
+}
+
+.help-block {
+	display: grid;
+	gap: 0.9rem;
+}
+
+.help-block + .help-block {
+	margin-top: 2rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--border);
+}
+
+.help-block > h2 {
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	font-weight: 500;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--foreground-muted);
+}
+
+.help-pre {
+	display: grid;
+	gap: 0.5rem;
+	padding-left: 1.1rem;
+	font-size: 0.95rem;
+}
+
+.help-result {
+	padding: 1rem 1.1rem;
+	border-left: 3px solid var(--nx-success);
+	background: var(--surface-muted);
+	font-size: 0.95rem;
+}
+
+.help-figure {
+	display: grid;
+	gap: 0.6rem;
+	position: sticky;
+	top: calc(var(--nav-h) + 2rem);
+}
+
+.help-caption {
+	font-size: 0.82rem;
+	color: var(--foreground-muted);
+}
+
+.help-related {
+	display: grid;
+	gap: 0.5rem;
+	list-style: none;
+}
+
+.help-related a {
+	color: var(--accent-text);
+	font-weight: 600;
+	text-underline-offset: 3px;
+}
+
+.help-pager {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-top: clamp(2.5rem, 5vw, 4rem);
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--border);
+}
+
+.help-pager a {
+	display: grid;
+	gap: 0.2rem;
+	color: inherit;
+	max-width: 45%;
+}
+
+.help-pager small {
+	font-family: var(--font-mono);
+	font-size: 0.7rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--foreground-muted);
+}
+
+.help-pager b {
+	font-family: var(--font-display);
+	font-weight: 700;
+}
+
+.help-pager .next {
+	margin-left: auto;
+	text-align: right;
+}
+
+@media (max-width: 899px) {
+	.help-guide-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.help-figure {
+		position: static;
+	}
+
+	.help-pager a {
+		max-width: 100%;
+	}
+}

@@ -137,6 +137,12 @@ const STATUS_CLASS = { live: 'status--live', dev: 'status--dev', custom: 'status
 </script>
 
 <style>
+	/* Enlace dentro de texto: subrayado, no solo color (WCAG 1.4.1). */
+	.case figcaption a {
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
 	.mods {
 		background: var(--surface);
 		border-block: 1px solid var(--border);
