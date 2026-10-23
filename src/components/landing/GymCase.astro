@@ -138,6 +138,12 @@ import { GYM_FLOW, whatsappLink } from '../../data/site';
 		border-color: var(--nx-graphite-700);
 	}
 
+	/* La sección es oscura pero la captura en tema claro es blanca: la URL
+	   de la barra usa el gris de la superficie clara (contraste AA). */
+	:global(:root:not([data-theme='dark'])) .gym-shots :global(.shot-url) {
+		color: var(--nx-graphite-500);
+	}
+
 	.gym-cta {
 		display: flex;
 		flex-wrap: wrap;
