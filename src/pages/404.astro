@@ -1,113 +1,69 @@
 ---
+/**
+ * 404 de NEXUS: la misma de la app (nexus-thrive/app/not-found.tsx).
+ * El CSS es copia exacta de nexus-thrive/packages/brand/css/not-found.css;
+ * `pnpm check:brand` falla si se separan.
+ */
 import Layout from '../layouts/Layout.astro';
+import '../styles/not-found.css';
+
+const N_PATH =
+  'M394.83 874.18 L394.83 239.93 L699.27 239.93 L837.22 525.34 L864.18 511.07 L799.96 371.52 L799.96 239.93 L1129.79 239.93 L1129.79 874.18 L815.82 874.18 L704.04 614.93 L677.87 630.79 L725.44 741.77 L725.44 874.18 Z';
 ---
 
 <Layout title="Página no encontrada">
-  <main class="nf">
-    <div class="nf-container">
-
-      <span class="nf-code">404</span>
-
-      <h1>SYSTEM NOT FOUND</h1>
-
-      <p class="nf-text">
-        La página que buscas no existe o fue movida.
-        El sistema sigue funcionando — solo esta ruta se perdió.
+  <main class="nf" aria-labelledby="nf-title">
+    <div class="nf-grid" aria-hidden="true"></div>
+    <div class="nf-beam" aria-hidden="true"></div>
+    <section class="nf-card">
+      <p class="nf-eyebrow">
+        <span class="nf-dot" aria-hidden="true"></span>
+        Error 404 · Ruta no encontrada
       </p>
-
-      <a href="/" class="nf-link">
-        <span>Volver a NEXUS</span>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M19 12H5"></path>
-          <path d="m11 18-6-6 6-6"></path>
+      <div class="nf-code" role="img" aria-label="404">
+        <span class="nf-digit" aria-hidden="true">4</span>
+        <svg class="nf-n" viewBox="380 225 765 665" aria-hidden="true">
+          <path class="o" d={N_PATH} pathLength="1"></path>
+          <path class="f" d={N_PATH}></path>
+          <path class="t" d={N_PATH} pathLength="1"></path>
         </svg>
-      </a>
-
-    </div>
+        <span class="nf-digit" aria-hidden="true">4</span>
+      </div>
+      <h1 id="nf-title" class="nf-title">Esta ruta no está en el sistema.</h1>
+      <p class="nf-text">
+        La página que buscas no existe o cambió de lugar. Todo lo demás sigue funcionando.
+      </p>
+      <div class="nf-actions">
+        <a href="/" class="nf-btn nf-btn--primary">
+          Volver al inicio
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14"></path>
+            <path d="m13 6 6 6-6 6"></path>
+          </svg>
+        </a>
+        <button type="button" class="nf-btn nf-btn--ghost" data-nf-back>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 12H5"></path>
+            <path d="m11 18-6-6 6-6"></path>
+          </svg>
+          Página anterior
+        </button>
+      </div>
+      <p class="nf-trace">
+        <span>GET</span>
+        <span class="nf-trace-path" data-nf-path>/</span>
+        <span class="nf-trace-code">404</span>
+      </p>
+    </section>
   </main>
 </Layout>
 
-<style>
-  .nf {
-    min-height: 100svh;
-
-    display: grid;
-    place-items: center;
-
-    padding: 8rem var(--gutter) 4rem;
-  }
-
-  .nf-container {
-    max-width: 520px;
-
-    margin: 0 auto;
-
-    text-align: center;
-  }
-
-  .nf-code {
-    display: block;
-
-    margin-bottom: 1.2rem;
-
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.3em;
-
-    color: var(--accent-text, var(--accent-default));
-  }
-
-  .nf-container h1 {
-    margin: 0;
-
-    font-family: var(--font-display);
-    font-size: clamp(2.2rem, 5vw, 3.4rem);
-    font-weight: 500;
-    line-height: 1.02;
-    letter-spacing: -0.04em;
-
-    color: var(--text-primary);
-  }
-
-  .nf-text {
-    margin: 1.2rem 0 2.2rem;
-
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    line-height: 1.65;
-
-    color: var(--text-secondary);
-  }
-
-  .nf-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-
-    min-height: 48px;
-    padding: 0 1.4rem;
-
-    border: 1px solid var(--accent-default);
-    border-radius: 7px;
-
-    background: var(--accent-default);
-    color: #050505;
-
-    font-family: var(--font-sans);
-    font-size: 0.86rem;
-    font-weight: 600;
-
-    transition:
-      transform 0.2s ease,
-      box-shadow 0.2s ease;
-  }
-
-  .nf-link:hover {
-    color: #050505;
-
-    transform: translateY(-2px);
-
-    box-shadow: 0 12px 35px rgba(212, 175, 55, 0.2);
-  }
-</style>
+<script>
+  // La ruta pedida (la 404 es estática) y "Página anterior" (sin historial, al inicio).
+  const path = document.querySelector<HTMLElement>('[data-nf-path]');
+  if (path) path.textContent = decodeURI(location.pathname) || '/';
+  document.querySelector('[data-nf-back]')?.addEventListener('click', () => {
+    if (history.length > 1) history.back();
+    else location.href = '/';
+  });
+</script>

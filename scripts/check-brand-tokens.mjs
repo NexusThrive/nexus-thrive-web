@@ -44,4 +44,12 @@ if (problems.length > 0) {
   process.exit(1);
 }
 
-console.log(`Marca alineada: ${landing.size} primitivos --nx-* coinciden con ${brandPath}.`);
+// La página 404 es la misma en la app y en la landing: el CSS se copia tal cual.
+const notFoundBrand = resolve(brandPath, "../not-found.css");
+const notFoundLanding = resolve(root, "src/styles/not-found.css");
+if (existsSync(notFoundBrand) && readFileSync(notFoundBrand, "utf8") !== readFileSync(notFoundLanding, "utf8")) {
+  console.error(`La 404 se separó de la marca. Copia ${notFoundBrand} en src/styles/not-found.css.`);
+  process.exit(1);
+}
+
+console.log(`Marca alineada: ${landing.size} primitivos --nx-* coinciden con ${brandPath}; la 404 es idéntica.`);
