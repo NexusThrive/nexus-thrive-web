@@ -140,15 +140,13 @@ export const AUDIENCES = [
 ] as const;
 
 /**
- * Equipo: nombres y áreas tal como aparecían en la landing anterior. Sin
- * fotos publicadas: se muestran iniciales. Para agregar una foto, importar
- * el archivo en Team.astro y asignarlo a `photo`.
+ * Fundadores. La sección `#equipo` muestra solo al equipo fundador. Sin
+ * fotos publicadas todavía: se muestran iniciales. La foto del CEO se
+ * importa en Team.astro y se asigna en `photos`.
  */
-export const TEAM = [
-  { name: 'Santiago Castellar', area: 'Dirección', text: 'Dirige NEXUS y acompaña a cada negocio desde la primera conversación hasta la entrega.', initials: 'SC' },
-  { name: 'Carlos Mario Hernandez', area: 'Producto', text: 'Convierte las necesidades de cada negocio en producto que se usa de verdad.', initials: 'CH' },
-  { name: 'Nicolas Florez', area: 'Finanzas', text: 'Presupuestos claros y pagos con comprobante, sin sorpresas.', initials: 'NF' },
-  { name: 'Justin Cabarcas', area: 'Redes y captación', text: 'Redes y captación: que a cada negocio lo encuentren y lo contacten.', initials: 'JC' },
+export const FOUNDERS = [
+  { name: 'Santiago Castellar', role: 'CEO', text: 'Dirige NEXUS y acompaña a cada negocio desde la primera conversación hasta la entrega.', initials: 'SC' },
+  { name: 'Nicolas Florez', role: 'CFO', text: 'Presupuestos claros y pagos con comprobante, sin sorpresas.', initials: 'NF' },
 ] as const;
 
 export const PRINCIPLES = [
