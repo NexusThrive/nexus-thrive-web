@@ -16,7 +16,7 @@ const jsonLd = {
 ---
 
 <section class="full faq" id="faq" aria-labelledby="faq-title">
-	<div class="full-bg" aria-hidden="true"><SectionBackground client:load kind="ondas" /></div>
+	<div class="full-bg" aria-hidden="true"><SectionBackground client:idle kind="ondas" /></div>
 	<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	<div class="container faq-grid">
 		<header class="faq-head" data-head>
@@ -85,8 +85,6 @@ const jsonLd = {
 		background:
 			linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02) 55%, rgba(255, 255, 255, 0.06)),
 			rgba(14, 14, 16, 0.5);
-		-webkit-backdrop-filter: blur(18px) saturate(160%);
-		backdrop-filter: blur(18px) saturate(160%);
 		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24), 0 20px 44px -22px rgba(0, 0, 0, 0.8);
 	}
 

@@ -22,7 +22,7 @@ const R = 38, C = 2 * Math.PI * R;
 ---
 
 <section class="full caps" id="servicios" aria-labelledby="caps-title" data-caps>
-	<div class="full-bg" aria-hidden="true"><SectionBackground client:load kind="hebras" /></div>
+	<div class="full-bg" aria-hidden="true"><SectionBackground client:idle kind="hebras" /></div>
 	<div class="container caps-in">
 		<header class="caps-head" data-head>
 			<h2 id="caps-title" class="title-lg">{CAPABILITIES_SECTION.title}</h2>
@@ -40,7 +40,7 @@ const R = 38, C = 2 * Math.PI * R;
 							<p>{c.text}</p>
 						</div>
 
-						<div class="vis glass-lg" aria-hidden="true" data-w={c.widget}>
+						<div class="vis glass-lg glass-blur" aria-hidden="true" data-w={c.widget}>
 							{c.widget === 'build' && (
 								<div class="wb-win" data-b-win>
 									<div class="wb-bar"><i></i><i></i><i></i><span class="wb-url"></span><span class="wb-badge" data-b-badge>Publicado</span></div>

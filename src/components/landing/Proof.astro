@@ -17,7 +17,7 @@ const tiles = Array.from({ length: COLS * ROWS }, (_, i) => ({
 ---
 
 <section class="full proof" id="trabajo" aria-labelledby="proof-title">
-	<div class="full-bg full-bg--top" aria-hidden="true"><SectionBackground client:load kind="lluvia" /></div>
+	<div class="full-bg full-bg--top" aria-hidden="true"><SectionBackground client:idle kind="lluvia" /></div>
 	<div class="container proof-head" data-head>
 		<h2 id="proof-title" class="title-lg">{PROOF.title}</h2>
 		<p class="lead">{PROOF.text}</p>

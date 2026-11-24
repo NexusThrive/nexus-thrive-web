@@ -1,6 +1,6 @@
 ---
 import { SCENE } from '../../data/landing';
-import Lightfall from '../react/reactbits/Lightfall.jsx';
+import SectionBackground from '../react/SectionBackground';
 import { MessageCircle, Mail, Table2, ClipboardList, CalendarDays, Receipt, Check } from '@lucide/astro';
 
 const ICONS = [MessageCircle, Mail, Table2, ClipboardList, CalendarDays, Receipt];
@@ -21,7 +21,7 @@ const line = pts.map((p, i, a) => {
 
 <section class="scene full" id="sistema" aria-labelledby="scene-title" data-scene>
 	<div class="scene-bg" aria-hidden="true">
-		<div class="scene-bg-view"><Lightfall client:visible dpr={1} mouseInteraction={false} holdToWarp={false} /></div>
+		<div class="scene-bg-view"><SectionBackground client:idle kind="lluvia" /></div>
 	</div>
 
 	<div class="scene-pin" data-scene-pin>
@@ -173,8 +173,8 @@ const line = pts.map((p, i, a) => {
 			radial-gradient(70% 90% at 6% 0%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 65%),
 			linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 45%, rgba(255, 255, 255, 0.07) 100%),
 			rgba(10, 10, 11, 0.3);
-		-webkit-backdrop-filter: blur(14px) saturate(180%);
-		backdrop-filter: blur(14px) saturate(180%);
+		-webkit-backdrop-filter: blur(10px) saturate(160%);
+		backdrop-filter: blur(10px) saturate(160%);
 		box-shadow: var(--glass-shadow);
 	}
 
@@ -417,6 +417,7 @@ const line = pts.map((p, i, a) => {
 	/* ---- Modo vivo (lo activa el script) ---- */
 	.scene-stage.is-live .sc-el,
 	.scene-stage.is-live .sc-node {
+		contain: layout style;
 		position: absolute;
 		left: 0;
 		top: 0;

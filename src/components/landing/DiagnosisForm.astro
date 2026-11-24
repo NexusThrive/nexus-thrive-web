@@ -17,7 +17,7 @@ const F = FORM.fields;
 
 		</div>
 
-		<div class="card glass-lg">
+		<div class="card glass-lg glass-blur">
 			<FormAuri client:visible />
 			<form class="form" novalidate data-diag data-wa={WHATSAPP_NUMBER}>
 				<div class="field">
@@ -241,8 +241,6 @@ const F = FORM.fields;
 		position: absolute;
 		inset: 0;
 		z-index: -1;
-		-webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
-		mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
 	}
 
 	/* Velo para que el texto se lea sobre el movimiento. */
@@ -250,7 +248,9 @@ const F = FORM.fields;
 		content: '';
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(90deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.15) 70%);
+		background:
+			linear-gradient(to bottom, var(--nx-ink), transparent 16%, transparent 84%, var(--nx-ink)),
+			linear-gradient(90deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.15) 70%);
 	}
 
 	.final-inner {
