@@ -14,7 +14,7 @@ export default defineConfig({
     // `react-dom/client` llega sin `createRoot`, las islas no hidratan y
     // componentes como Auri se quedan como HTML estático.
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react-dom/client', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
+      include: ['react', 'react-dom', 'react-dom/client', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'ogl'],
     },
   },
 });
