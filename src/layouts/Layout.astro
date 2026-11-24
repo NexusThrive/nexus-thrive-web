@@ -33,9 +33,12 @@ const OG_IMAGE = new URL('/og-image.webp', SITE_URL);
 			(function () {
 				var d = document.documentElement;
 				d.classList.add('js');
-				/* Pantalla de carga: una vez por sesión y solo con movimiento permitido. */
+				/* Pantalla de carga: solo en la primera visita (queda guardado en localStorage) y con movimiento permitido. Sin almacenamiento disponible no se muestra. */
 				try {
-					if (!matchMedia('(prefers-reduced-motion: reduce)').matches && location.pathname === '/') d.classList.add('preloading');
+					if (!matchMedia('(prefers-reduced-motion: reduce)').matches && location.pathname === '/' && !localStorage.getItem('nx-visited')) {
+						localStorage.setItem('nx-visited', '1');
+						d.classList.add('preloading');
+					}
 				} catch (e) {}
 				/* Modo oscuro fijo: no hay selector de tema. */
 				d.dataset.theme = 'dark';
