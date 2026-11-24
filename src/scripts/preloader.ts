@@ -273,7 +273,6 @@ if (!el || !root.classList.contains('preloading')) {
 
 	// Control: un clic, un toque o cualquier tecla lo salta; no hace esperar a nadie.
 	const skip = () => { if (!ended) { ended = true; if (!closing) { closing = true; finish(true); } } };
-	el.querySelector('[data-pl-skip]')?.addEventListener('click', skip);
 	el.addEventListener('pointerdown', skip, { once: true });
 	window.addEventListener('keydown', skip, { once: true });
 
