@@ -57,7 +57,7 @@ salto de la pantalla de carga. No se midieron cuadros por segundo en un teléfon
 
 - **Tarjeta de respuesta de Auri:** casi transparente, con desenfoque y saturación de lo que hay detrás, borde de luz, reflejos internos y un brillo especular arriba a la izquierda.
 - **Barra de navegación:** la misma idea en versión oscura (tinte negro translúcido). Los enlaces al pasar el cursor y el botón del menú móvil son cápsulas de vidrio.
-- `backdrop-filter` está en la barra, en la tarjeta y en las piezas de la escena del sistema (sobre el fondo Lightfall a 1x, que se pausa fuera de pantalla). Mientras dura esa escena la barra se esconde; la caja de Auri ya no lo usa porque obligaba a repintar en cada cuadro del WebGL.
+- `backdrop-filter` real solo en la escena del sistema, la demostración de Servicios, el formulario y la tarjeta de Auri. Nunca en lo que flota sobre toda la página (barra, WhatsApp) ni en rejillas de tarjetas: medido, era la mayor causa de lag.
 
 ## Escena, widgets y logo (rediseño con motion graphics)
 
@@ -88,6 +88,13 @@ salto de la pantalla de carga. No se midieron cuadros por segundo en un teléfon
 - Cada sección lleva la clase `.full` (`global.css`): alto mínimo de la ventana, fondo WebGL propio a sangre (`SectionBackground.tsx`, blanco plata, sin cursor, montado solo cerca de la pantalla) y superficies de vidrio (`.glass-lg` y tokens redefinidos).
 - Fijadas al scroll: la escena del sistema, Servicios (`caps-scene.ts`, un servicio por pantalla) y Cómo trabajamos (`motion.ts`, solo escritorio). Si el contenido no cabe en la ventana no se fijan y quedan apiladas.
 - La barra se esconde al bajar y vuelve al subir; en la escena del sistema no aparece.
+
+### Presupuesto de dibujo
+
+- `src/lib/render-budget.ts` reparte los cuadros de los fondos: ~30 fps cada uno y nunca dos en el mismo cuadro. Si la página va lenta de forma sostenida (o el equipo es modesto) baja resolución y cadencia y quita el desenfoque (`data-perf` en `<html>`).
+- Los fondos se preparan una ventana antes, en un momento libre, y se desmontan a más de dos ventanas.
+- Fuera de la vista se pausan las animaciones CSS (`.is-off`); en Servicios solo corre la demostración visible.
+- Al actualizar un fondo de React Bits hay que volver a cambiar `requestAnimationFrame` por `requestFrame`.
 
 ### Pendiente (siguiente fase)
 
