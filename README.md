@@ -5,8 +5,8 @@
 <h1 align="center">NEXUS THRIVE · Web</h1>
 
 <p align="center">
-  <strong>La cara pública de NEXUS.</strong><br>
-  Landing, centro de ayuda y páginas legales de la plataforma que ordena la operación de las pymes colombianas.
+  <strong>El sitio de NEXUS THRIVE.</strong><br>
+  Landing de soluciones digitales para empresas, centro de ayuda de NEXUS y páginas legales.
 </p>
 
 <p align="center">
@@ -19,6 +19,8 @@
 
 <p align="center">
   <img alt="Astro 7" src="https://img.shields.io/badge/Astro-7-BC52EE?logo=astro&logoColor=white">
+  <img alt="React 19" src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black">
+  <img alt="GSAP" src="https://img.shields.io/badge/GSAP-ScrollTrigger-0AE448?logo=gsap&logoColor=black">
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white">
   <img alt="CSS" src="https://img.shields.io/badge/CSS-Tokens_NEXUS-000000?logo=css3&logoColor=white">
   <img alt="Node.js" src="https://img.shields.io/badge/Node.js-%E2%89%A522.12-5FA04E?logo=nodedotjs&logoColor=white">
@@ -27,13 +29,13 @@
 
 <p align="center">
   <img
-    src="src/assets/product/screenshot-2026-10-23_12-52-04.png"
-    alt="Inicio de un negocio en NEXUS: ingresos, socios activos, gastos, balance y gráfico de ingresos y gastos de la semana."
+    src="docs/capturas/inicio.webp"
+    alt="Inicio del sitio de NEXUS THRIVE: el titular «Tu empresa tiene más potencial» junto a Auri, una esfera de puntos que lee una solicitud."
     width="100%"
   >
 </p>
 
-<p align="center"><sub>Captura real del Inicio de NEXUS en modo claro, con datos de demostración.</sub></p>
+<p align="center"><sub>Inicio del sitio. A la derecha, Auri lee un problema y prepara su sugerencia.</sub></p>
 
 ## ¿Qué es NEXUS?
 
@@ -50,11 +52,14 @@ producto —un gimnasio ve socios, membresías y control de acceso; un museo ve
 taquilla y aforo; una constructora ve obras, APU y actas— pero por debajo son
 las mismas capacidades combinadas.
 
-Este repositorio es la **superficie pública** de ese producto:
+Este repositorio es el **sitio público** de NEXUS THRIVE, el equipo que
+desarrolla NEXUS y construye software, automatizaciones e inteligencia
+artificial para empresas. En la landing, NEXUS aparece como el producto propio
+que demuestra ese trabajo.
 
 | Ruta | Contenido |
 | --- | --- |
-| `/` | Landing: qué es NEXUS, módulos, caso gimnasio, método de trabajo, equipo y contacto |
+| `/` | Landing: problemas, sistema conectado, servicios, trabajo propio, proceso, diferenciales, preguntas y contacto |
 | `/help` | Centro de ayuda con guías paso a paso de lo que la app hace hoy |
 | `/help/<guía>` | Una página por guía, con pasos, errores frecuentes y enlaces relacionados |
 | `/privacidad`, `/terminos`, `/cookies` | Páginas legales |
@@ -91,13 +96,43 @@ ecosistema contable. El detalle está en la
 y el plan técnico en el
 [roadmap](https://github.com/NexusThrive/nexus-thrive/blob/main/docs/nexus-architecture/roadmap.md).
 
+## La landing
+
+Cada sección ocupa al menos el alto de la ventana y tiene su propio fondo
+animado. Las superficies son de vidrio líquido; el oro queda como acento.
+
+| Sección | Qué muestra |
+| --- | --- |
+| **Inicio** | El titular y Auri, que recibe un problema y responde con una sugerencia por palabras clave (sin IA generativa) |
+| **Problemas** | Seis situaciones que llegan en desorden y se acomodan con el scroll |
+| **Sistema** | Mensajes y documentos sueltos que se conectan en un flujo y se vuelven un panel |
+| **Servicios** | Un servicio por pantalla, cada uno con su demostración animada |
+| **Nuestro trabajo** | La captura real de NEXUS que se arma por piezas |
+| **Cómo trabajamos** | Cuatro pasos que se encienden uno a uno |
+| **Diferenciales y preguntas** | Siete tarjetas animadas y ocho preguntas frecuentes |
+| **Contacto** | Formulario que prepara el mensaje y abre WhatsApp; no envía datos a un servidor propio |
+
+- **Movimiento reducido:** con `prefers-reduced-motion` no hay scroll suave ni
+  secciones fijadas, y las escenas se ven en su estado final.
+- **Rendimiento:** los fondos de las secciones se crean solo cerca de la
+  pantalla y se eliminan al alejarse.
+- **Contenido que no cabe:** Servicios y Cómo trabajamos no se fijan si no caben
+  en la ventana; quedan apilados.
+
+Las decisiones de movimiento están en
+[`docs/movimiento-landing.md`](docs/movimiento-landing.md) y las de contenido, con
+sus pendientes, en [`docs/contenido-landing.md`](docs/contenido-landing.md).
+
 ## Tecnologías
 
 | Capa | Tecnología | Uso |
 | --- | --- | --- |
 | **Sitio** | Astro 7 | Generación estática, rutas y componentes `.astro` |
+| **Islas** | React 19 | Auri, logo de puntos, asistente del formulario y fondos |
+| **Movimiento** | GSAP · ScrollTrigger · Lenis | Escenas ligadas al scroll, widgets y scroll suave |
+| **Fondos** | React Bits · OGL · WebGL2 | Fondos animados por sección |
 | **Lenguaje** | TypeScript | Tipado en datos, componentes y configuración |
-| **Estilos** | CSS con variables · tokens `--nx-*` | Sistema de marca NEXUS, modo claro y oscuro, sin framework de UI |
+| **Estilos** | CSS con variables · tokens `--nx-*` | Sistema de marca NEXUS y vidrio líquido, sin framework de UI |
 | **Iconos** | `@lucide/astro` | Iconografía de la landing y la ayuda |
 | **Tipografía** | Montserrat · Inter · JetBrains Mono | Fuentes autoalojadas en `public/fonts` |
 | **Imágenes** | WebP · `passthroughImageService` | Capturas reales ya optimizadas, sin procesamiento en el build |
@@ -123,15 +158,20 @@ El servidor de desarrollo en segundo plano se controla con `astro dev status`,
 ```
 src/pages/                  Landing, ayuda, legales, 404 y gracias
 src/components/landing/     Secciones de la landing
+src/components/react/       Islas: Auri, logo de puntos, asistente y fondos
+src/components/react/reactbits/  Fondos de React Bits
 src/components/brand/       Logo oficial (lockup y marca)
-src/data/site.ts            Contenido verificable de la landing
+src/scripts/                Movimiento: scroll, escenas, widgets y pantalla de carga
+src/data/landing.ts         Textos de la landing
+src/data/site.ts            Datos del sitio, navegación y redes
 src/data/help.ts            Guías y preguntas del centro de ayuda
 src/assets/product/         Capturas reales de la app en claro y oscuro
 src/styles/tokens.css       Primitivos y semánticos de la marca
 src/styles/global.css       Base, layout y utilidades
 public/                     Íconos, fuentes, manifest y cabeceras
 scripts/check-brand-tokens.mjs  Verificación de tokens y de la página 404
-docs/capturas/              Evidencia visual de cambios de la ayuda
+docs/                       Decisiones de contenido y movimiento
+docs/capturas/              Captura del inicio y evidencia visual de la ayuda
 ```
 
 ## Marca
@@ -144,8 +184,8 @@ desalinean. No se agregan colores, fuentes ni radios propios.
 Reglas principales:
 
 - Negro dominante, papel y blanco como base, oro como único acento.
-- Radios casi rectos (2–8 px), bordes en lugar de sombras.
-- Un solo motivo gráfico: el corte diagonal de la N.
+- Radios suaves (controles 12 px, tarjetas 24 px, estados en píldora).
+- Vidrio líquido en las superficies de la landing.
 - El logo es la N con THRIVE debajo; no se recolorea ni se le añaden efectos.
 
 ## Contenido y capturas
@@ -160,6 +200,8 @@ Reglas principales:
   si cambió la pantalla, su captura.
 - Las páginas legales y la landing tampoco prometen funciones que todavía no
   existen: lo planificado se marca como "en desarrollo".
+- La landing no inventa clientes, métricas ni testimonios; las demostraciones
+  animadas usan datos simulados.
 
 ## Despliegue
 
