@@ -1,7 +1,8 @@
 /**
  * «Servicios»: los cuatro servicios se suceden a pantalla completa en un solo lugar, guiados por el scroll.
  * Sin JavaScript o con movimiento reducido quedan apilados, uno debajo del otro.
- * Solo se anima opacidad y posición (nunca `visibility`): los cuatro textos siguen disponibles para lectores de pantalla.
+ * Los textos solo cambian de opacidad (siguen disponibles para lectores de pantalla); las demostraciones, que son
+ * decorativas, además se ocultan para que el navegador no las pinte.
  */
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -30,11 +31,12 @@ function init(section: HTMLElement) {
 	panels.forEach((p, i) => {
 		if (i === 0) return;
 		const prev = panels[i - 1];
-		gsap.set([part(p, '.cap-copy'), part(p, '.vis')], { opacity: 0 });
+		gsap.set(part(p, '.cap-copy'), { opacity: 0 });
+		gsap.set(part(p, '.vis'), { autoAlpha: 0 });
 		const at = i - 0.67;
 		tl.to(part(prev, '.cap-copy'), { y: -70, opacity: 0, duration: 0.2, ease: 'power2.in' }, at)
-			.to(part(prev, '.vis'), { y: -120, opacity: 0, duration: 0.24, ease: 'power2.in' }, at)
-			.fromTo(part(p, '.vis'), { y: 150, opacity: 0 }, { y: 0, opacity: 1, ease: 'power3.out' }, at + 0.16)
+			.to(part(prev, '.vis'), { y: -120, autoAlpha: 0, duration: 0.24, ease: 'power2.in' }, at)
+			.fromTo(part(p, '.vis'), { y: 150, autoAlpha: 0 }, { y: 0, autoAlpha: 1, ease: 'power3.out' }, at + 0.16)
 			.fromTo(part(p, '.cap-copy'), { y: 80, opacity: 0 }, { y: 0, opacity: 1, ease: 'power3.out' }, at + 0.2);
 	});
 	tl.to({}, { duration: 0.01 }, last - 0.01);

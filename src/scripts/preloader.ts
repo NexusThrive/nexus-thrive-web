@@ -257,10 +257,11 @@ function play(el: HTMLElement) {
 			gx.setTransform(dpr, 0, 0, dpr, 0, 0);
 		};
 		fit();
-		window.addEventListener('resize', fit);
+		const onResize = () => { if (el.hidden) window.removeEventListener('resize', onResize); else { fit(); drawGrid(performance.now()); } };
+		window.addEventListener('resize', onResize);
 		const g0 = performance.now();
 		const drawGrid = (now: number) => {
-			if (el.hidden) { window.removeEventListener('resize', fit); return; }
+			if (el.hidden) return;
 			const t = (now - g0) / 1000;
 			gx.clearRect(0, 0, gw, gh);
 			const cols = Math.ceil(gw / GAP_PX) + 1, rows = Math.ceil(gh / GAP_PX) + 1;
@@ -280,7 +281,7 @@ function play(el: HTMLElement) {
 				}
 			}
 			gx.fill();
-			requestAnimationFrame(drawGrid);
+			if (t < 1.4) requestAnimationFrame(drawGrid); // ya encendida, la rejilla no cambia
 		};
 		requestAnimationFrame(drawGrid);
 	}

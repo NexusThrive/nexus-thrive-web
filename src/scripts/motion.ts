@@ -39,6 +39,10 @@ document.addEventListener('click', (e) => {
 	else target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
 });
 
+/* ---------- Fuera de la vista, las animaciones CSS se detienen ---------- */
+const offscreen = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle('is-off', !e.isIntersecting)), { rootMargin: '10% 0px' });
+document.querySelectorAll('.hero, .full, .footer').forEach((el) => offscreen.observe(el));
+
 if (!reduced) {
 	const q = <T extends Element>(sel: string, scope: ParentNode = document) => [...scope.querySelectorAll<T>(sel)];
 
@@ -206,5 +210,6 @@ if (!reduced) {
 	window.addEventListener('nx:ready', refresh);
 	window.addEventListener('load', refresh);
 	document.fonts?.ready.then(refresh);
-	document.addEventListener('toggle', () => ScrollTrigger.refresh(), true);
+	let toggled = 0;
+	document.addEventListener('toggle', () => { window.clearTimeout(toggled); toggled = window.setTimeout(refresh, 400); }, true);
 }

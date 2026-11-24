@@ -16,15 +16,21 @@ const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
 function drive(host: HTMLElement, make: () => gsap.core.Timeline) {
 	let tl: gsap.core.Timeline | null = null;
-	new IntersectionObserver(([e]) => {
-		if (e.isIntersecting) {
+	let seen = false;
+	// En Servicios los cuatro comparten lugar: solo corre el que se está mostrando.
+	const panel = host.closest<HTMLElement>('[data-cap]');
+	const hidden = () => !!panel?.closest('.is-live') && !panel.classList.contains('is-on');
+	const sync = () => {
+		if (seen && !hidden()) {
 			if (!tl) {
 				tl = make();
 				if (reduced) tl.progress(1).pause();
 			}
 			if (!reduced) tl.play();
 		} else tl?.pause();
-	}, { threshold: 0.25 }).observe(host);
+	};
+	new IntersectionObserver(([e]) => { seen = e.isIntersecting; sync(); }, { threshold: 0.25 }).observe(host);
+	if (panel) new MutationObserver(sync).observe(panel, { attributes: true, attributeFilter: ['class'] });
 }
 
 const counter = (nums: HTMLElement[], finals: number[], o: { v: number }) => () =>
