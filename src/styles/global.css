@@ -24,6 +24,41 @@ html {
   }
 }
 
+/* Barra de desplazamiento mínima: un hilo translúcido sin riel ni flechas, dorado al usarlo. */
+@supports selector(::-webkit-scrollbar) {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  ::-webkit-scrollbar-thumb:hover,
+  ::-webkit-scrollbar-thumb:active {
+    background: var(--accent);
+  }
+}
+
+/* Firefox no tiene esos selectores: usa la versión estándar. */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+}
+
 /* Cambio de tema suave, solo en colores (no retrasa nada más). La clase la
    pone el selector durante el cambio y la quita al terminar. */
 html.theme-switching,
@@ -499,26 +534,6 @@ html.preloading .preloader,
   translate: -50% -50%;
   opacity: 0;
   color: var(--foreground);
-}
-
-.pl-skip {
-  position: absolute;
-  right: 1.25rem;
-  bottom: 1.25rem;
-  min-height: 44px;
-  padding: 0 1.1rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--foreground-muted);
-  font: 600 0.85rem/1 var(--font-sans);
-  cursor: pointer;
-  transition: color var(--d2) var(--ease), border-color var(--d2) var(--ease);
-}
-
-.pl-skip:hover {
-  color: var(--foreground);
-  border-color: var(--border-strong);
 }
 
 .preloader.is-done {
