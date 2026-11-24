@@ -33,12 +33,11 @@ const OG_IMAGE = new URL('/og-image.webp', SITE_URL);
 			(function () {
 				var d = document.documentElement;
 				d.classList.add('js');
-				/* Pantalla de carga: solo en la primera visita (queda guardado en localStorage) y con movimiento permitido. Sin almacenamiento disponible no se muestra. */
+				/* Pantalla de carga: solo en la primera visita y con movimiento permitido. La marca se guarda en localStorage
+				   cuando la animación termina (preloader.ts); con ?intro en la dirección se vuelve a ver. */
 				try {
-					if (!matchMedia('(prefers-reduced-motion: reduce)').matches && location.pathname === '/' && !localStorage.getItem('nx-visited')) {
-						localStorage.setItem('nx-visited', '1');
-						d.classList.add('preloading');
-					}
+					var replay = new URLSearchParams(location.search).has('intro');
+					if (!matchMedia('(prefers-reduced-motion: reduce)').matches && location.pathname === '/' && (replay || !localStorage.getItem('nx-intro-seen'))) d.classList.add('preloading');
 				} catch (e) {}
 				/* Modo oscuro fijo: no hay selector de tema. */
 				d.dataset.theme = 'dark';

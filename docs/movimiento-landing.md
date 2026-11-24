@@ -21,7 +21,7 @@ Modo de visita: **persuadir**, así que se prefiere un momento focal ensayado a 
 - Sin rebote ni elástico por reflejo; el único resorte es la aparición de Auri, que es el momento focal.
 - Tiempos: retroalimentación 100–200 ms, cambios de estado 200–320 ms, entrada del hero 500–700 ms.
 - Todo bucle no esencial se pausa fuera de pantalla o con la pestaña oculta (Auri, cinta de tecnologías, logo de puntos, PixelBlast).
-- La pantalla de carga dura unos 5 s, se salta con un clic, un toque o una tecla, y sale solo en la primera visita (`nx-visited` en localStorage).
+- La pantalla de carga dura unos 5 s, se salta con un clic, un toque o una tecla, y sale solo en la primera visita (`nx-intro-seen` en localStorage, guardado al terminar; `/?intro` la repite).
 - `will-change` solo donde hay animación; `contain` en la caja de Auri; sin `transition: all`.
 - Contenido visible por defecto: si el script falla, nada queda oculto.
 

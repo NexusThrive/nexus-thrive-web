@@ -18,6 +18,8 @@ const reveal = () => {
 /* Salida: una View Transition entre la pantalla de carga y la página (el navegador mezcla las dos
    instantáneas con las animaciones de global.css). Sin soporte, se abre el telón como respaldo. */
 const finish = (animated: boolean) => {
+	// Vista o saltada, no vuelve a salir.
+	try { localStorage.setItem('nx-intro-seen', '1'); } catch {}
 	if (!el || !animated) { reveal(); return; }
 	const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
 	if (doc.startViewTransition) {
@@ -38,7 +40,19 @@ const finish = (animated: boolean) => {
 
 if (!el || !root.classList.contains('preloading')) {
 	if (el) el.hidden = true;
+} else if (document.visibilityState === 'visible') {
+	play(el);
 } else {
+	// Pestaña en segundo plano o precargada por el navegador: espera a que alguien la esté mirando.
+	const onVisible = () => {
+		if (document.visibilityState !== 'visible') return;
+		document.removeEventListener('visibilitychange', onVisible);
+		play(el);
+	};
+	document.addEventListener('visibilitychange', onVisible);
+}
+
+function play(el: HTMLElement) {
 	const cvs = el.querySelector<HTMLCanvasElement>('[data-pl-dots]')!;
 	// Entrada: el logo llega desde lejos y ligeramente inclinado, y se enfoca (perspectiva + desenfoque).
 	gsap.fromTo(el.querySelector('.pl-stage'), { z: -420, rotationX: 16, scale: 0.95, filter: 'blur(14px)', opacity: 0, transformPerspective: 1100 }, { z: 0, rotationX: 0, scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.3, ease: 'power3.out', clearProps: 'filter' });
