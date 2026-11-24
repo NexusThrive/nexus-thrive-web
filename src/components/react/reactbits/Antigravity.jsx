@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './Antigravity.css';
+import { cancelFrame, requestFrame } from '../../../lib/render-budget';
 
 const PIXEL_BUDGET = 2.4e6;
 const WORLD_HEIGHT = 31.5;
@@ -598,7 +599,7 @@ const Antigravity = ({
         if (lost || !parallel || gl.isContextLost()) return;
         if (!gl.getProgramParameter(linking.program, parallel.COMPLETION_STATUS_KHR)) {
           last = Math.max(last, now);
-          if (visible && pageVisible) raf = requestAnimationFrame(frame);
+          if (visible && pageVisible) raf = requestFrame(frame);
           return;
         }
         shader = finish(gl, linking);
@@ -672,13 +673,13 @@ const Antigravity = ({
       gl.uniform1f(u.uOpacity, s.opacity);
       gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, field.total);
 
-      if (visible && pageVisible) raf = requestAnimationFrame(frame);
+      if (visible && pageVisible) raf = requestFrame(frame);
     };
 
     const wake = () => {
       if (raf || lost || !visible || !pageVisible) return;
       last = performance.now();
-      raf = requestAnimationFrame(frame);
+      raf = requestFrame(frame);
     };
     wakeRef.current = () => {
       resize();
@@ -734,7 +735,7 @@ const Antigravity = ({
     const onLost = event => {
       event.preventDefault();
       lost = true;
-      cancelAnimationFrame(raf);
+      cancelFrame(raf);
       raf = 0;
     };
     const onRestored = () => setGeneration(value => value + 1);
@@ -763,7 +764,7 @@ const Antigravity = ({
     wake();
 
     return () => {
-      cancelAnimationFrame(raf);
+      cancelFrame(raf);
       wakeRef.current = null;
       resizeObserver.disconnect();
       intersection.disconnect();

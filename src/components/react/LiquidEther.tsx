@@ -1,3 +1,4 @@
+import { cancelFrame, requestFrame } from "../../lib/render-budget";
 import { useEffect, useRef } from "react";
 import { Renderer, Program, Mesh, Triangle } from "ogl";
 
@@ -120,8 +121,7 @@ export default function LiquidEther({
     let last = 0;
     let t = 0;
     const frame = (now: number) => {
-      raf = requestAnimationFrame(frame);
-      if (now - last < 33) return; // ~30 fps
+      raf = requestFrame(frame); // ~30 fps, compartido con los demás fondos
       const dt = Math.min(0.1, (now - last) / 1000);
       last = now;
       t += dt * speed;
@@ -135,8 +135,8 @@ export default function LiquidEther({
       program.uniforms.uVel.value = [vel.x, vel.y];
       renderer.render({ scene: mesh });
     };
-    const start = () => { if (!running && !reduced) { running = true; last = 0; raf = requestAnimationFrame(frame); } };
-    const stop = () => { running = false; cancelAnimationFrame(raf); };
+    const start = () => { if (!running && !reduced) { running = true; last = 0; raf = requestFrame(frame); } };
+    const stop = () => { running = false; cancelFrame(raf); };
 
     // Sin WebGL (o con el contexto bloqueado) no hay nada que dibujar: se deja el fondo oscuro del contenedor.
     try {

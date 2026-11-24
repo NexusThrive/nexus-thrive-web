@@ -1,3 +1,4 @@
+import { perfDpr } from "../../lib/render-budget";
 import { lazy, Suspense, useEffect, useState, type ComponentType } from "react";
 
 /* Fondos del hero para probar. El de por defecto es GradientASCII (React Bits); para ver otro,
@@ -19,6 +20,15 @@ const SHAPES = ["horizon", "pinch", "rise", "eclipse"] as const;
 const PARTICLES = ["capsule", "sphere", "box", "tetrahedron"] as const;
 
 export default function HeroBackground() {
+  /* Mientras corre la pantalla de carga el fondo no se ve: se crea cuando termina. */
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    if (!document.documentElement.classList.contains("preloading")) { setReady(true); return; }
+    const go = () => setReady(true);
+    window.addEventListener("nx:ready", go, { once: true });
+    const timer = window.setTimeout(go, 10500);
+    return () => { window.removeEventListener("nx:ready", go); window.clearTimeout(timer); };
+  }, []);
   const [bg, setBg] = useState<Bg>("ghost-fibers");
   const [shape, setShape] = useState<(typeof SHAPES)[number]>("pinch");
   const [cell, setCell] = useState(16);
@@ -41,6 +51,8 @@ export default function HeroBackground() {
     setCell(window.innerWidth < 700 ? 12 : 16);
   }, []);
 
+  if (!ready) return null;
+
   return (
     <Suspense fallback={null}>
       {bg === "ghost-fibers" ? (
@@ -62,7 +74,7 @@ export default function HeroBackground() {
           mouseInteraction={false}
           hoverEffect="none"
           pulseOnClick={false}
-          dpr={0.75}
+          dpr={0.75 * perfDpr()}
         />
       ) : bg === "magnet-lines" ? (
         <MagnetLines

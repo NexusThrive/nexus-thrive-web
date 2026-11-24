@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import './PixelBlast.css';
+import { cancelFrame, requestFrame } from '../../../lib/render-budget';
 
 const MAX_CLICKS = 10;
 const INTRO_SECONDS = 1.8;
@@ -823,7 +824,7 @@ const PixelBlast = ({
       if (document.hidden) return;
       // Tope de ~30 fps: la trama deriva despacio y no gana nada con más cuadros.
       if (last && now - last < 30) {
-        raf = requestAnimationFrame(frame);
+        raf = requestFrame(frame);
         return;
       }
       const dt = last ? clamp((now - last) / 1000, 0, 1 / 20) : 0;
@@ -862,14 +863,14 @@ const PixelBlast = ({
       busy = busy || introClock < 1 || presence > 0.001;
       for (let k = 0; k < MAX_CLICKS; k++) busy = busy || (clickPos[k * 2] >= 0 && clickAge[k] < 8);
       quiet = busy ? 0 : quiet + dt;
-      if (quiet < 1.5) raf = requestAnimationFrame(frame);
+      if (quiet < 1.5) raf = requestFrame(frame);
     };
 
     function wake() {
       quiet = 0;
       if (!raf && (visible || !settingsRef.current.autoPauseOffscreen) && !document.hidden) {
         last = 0;
-        raf = requestAnimationFrame(frame);
+        raf = requestFrame(frame);
       }
     }
 
@@ -932,7 +933,7 @@ const PixelBlast = ({
     wakeRef.current = wake;
 
     return () => {
-      cancelAnimationFrame(raf);
+      cancelFrame(raf);
       wakeRef.current = null;
       resizeObserver.disconnect();
       intersection.disconnect();

@@ -316,7 +316,7 @@ function createOrb(canvas: HTMLCanvasElement, getSpeed: () => number, isReduced:
   themeWatch.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
   // El hero amplía la caja con `zoom`: se dibuja a más resolución para que los puntos no se vean borrosos.
-  const dpr = Math.min(3, (window.devicePixelRatio || 1) * 1.7);
+  const dpr = Math.min(2, (window.devicePixelRatio || 1) * 1.5);
   canvas.width = Math.round(CANVAS * dpr);
   canvas.height = Math.round(CANVAS * dpr);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);

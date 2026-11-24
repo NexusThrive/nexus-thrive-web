@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 import './Threads.css';
+import { cancelFrame, requestFrame } from '../../../lib/render-budget';
 
 const LINE_VERTEX = `#version 300 es
 precision highp float;
@@ -191,6 +192,7 @@ const Threads = ({
   fade = 0,
   opacity = 1,
   paused = false,
+  dpr,
   ...rest
 }) => {
   const containerRef = useRef(null);
@@ -220,7 +222,8 @@ const Threads = ({
     brightness: clamp(brightness, 0.25, 2),
     fade: clamp(fade, 0, 1),
     opacity: clamp(opacity, 0, 1),
-    paused
+    paused,
+    dpr
   };
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
@@ -348,7 +351,7 @@ const Threads = ({
       const width = Math.max(1, container.clientWidth);
       const height = Math.max(1, container.clientHeight);
       // Resolución 1x como tope: son líneas suaves y a 2x cuesta cuatro veces más píxeles.
-      const baseDpr = 1;
+      const baseDpr = settingsRef.current.dpr || 1;
       const longest = Math.max(width, height) * baseDpr;
       const dpr = longest > MAX_RENDER_DIM ? (baseDpr * MAX_RENDER_DIM) / longest : baseDpr;
       canvas.width = Math.max(1, Math.round(width * dpr));
@@ -432,7 +435,7 @@ const Threads = ({
       const s = settingsRef.current;
       // Tope de ~30 fps: las hebras fluyen despacio y no ganan nada con más cuadros.
       if (last && now - last < 30) {
-        raf = requestAnimationFrame(frame);
+        raf = requestFrame(frame);
         return;
       }
       const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
@@ -453,12 +456,12 @@ const Threads = ({
         Math.abs(state.targetPointer[0] - state.pointer[0]) > 0.05 ||
         Math.abs(state.targetPointer[1] - state.pointer[1]) > 0.05 ||
         Math.abs((state.inside && s.parting > 0 ? 1 : 0) - state.presence) > 0.002;
-      if (moving || settling) raf = requestAnimationFrame(frame);
+      if (moving || settling) raf = requestFrame(frame);
       else last = 0;
     };
 
     const wake = () => {
-      if (!raf && alive && visible && !document.hidden) raf = requestAnimationFrame(frame);
+      if (!raf && alive && visible && !document.hidden) raf = requestFrame(frame);
     };
 
     const onPointerMove = event => {
@@ -513,7 +516,7 @@ const Threads = ({
 
     return () => {
       alive = false;
-      cancelAnimationFrame(raf);
+      cancelFrame(raf);
       wakeRef.current = null;
       resizeObserver.disconnect();
       intersection.disconnect();

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 import './GhostFibers.css';
+import { cancelFrame, requestFrame } from '../../../lib/render-budget';
 
 const MAX_RENDER_DIM = 2400;
 const BLOOM_LEVELS = 5;
@@ -942,7 +943,7 @@ const GhostFibers = ({
       const s = settingsRef.current;
       // Tope de ~30 fps: las fibras fluyen despacio y no ganan nada con más cuadros.
       if (last && now - last < 30) {
-        raf = requestAnimationFrame(frame);
+        raf = requestFrame(frame);
         return;
       }
       const elapsed = last ? (now - last) / 1000 : 1 / 60;
@@ -995,12 +996,12 @@ const GhostFibers = ({
         Math.abs(lookY - look.y) > 0.0002 ||
         Math.abs(focusGoal - state.focus) > 0.001 ||
         state.pulse.strength > 0.001;
-      if (moving || settling) raf = requestAnimationFrame(frame);
+      if (moving || settling) raf = requestFrame(frame);
       else last = 0;
     };
 
     const wake = () => {
-      if (!raf && alive && visible && !document.hidden) raf = requestAnimationFrame(frame);
+      if (!raf && alive && visible && !document.hidden) raf = requestFrame(frame);
     };
 
     const onPointerMove = event => {
@@ -1064,7 +1065,7 @@ const GhostFibers = ({
 
     return () => {
       alive = false;
-      cancelAnimationFrame(raf);
+      cancelFrame(raf);
       wakeRef.current = null;
       resizeObserver.disconnect();
       intersection.disconnect();

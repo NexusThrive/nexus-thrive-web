@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import './Lightfall.css';
+import { cancelFrame, requestFrame } from '../../../lib/render-budget';
 
 const MAX_COLORS = 8;
 const BLOOM_LEVELS = 4;
@@ -617,12 +618,12 @@ const Lightfall = ({
       render();
 
       const settling = state.intro < 1 || state.warp > 0.001 || Math.abs((engaged ? 1 : 0) - state.touch) > 0.002;
-      if ((running && s.speed !== 0) || settling) raf = requestAnimationFrame(frame);
+      if ((running && s.speed !== 0) || settling) raf = requestFrame(frame);
       else last = 0;
     };
 
     const wake = () => {
-      if (!raf && visible && !document.hidden) raf = requestAnimationFrame(frame);
+      if (!raf && visible && !document.hidden) raf = requestFrame(frame);
     };
 
     const resize = () => {
@@ -708,7 +709,7 @@ const Lightfall = ({
     };
 
     return () => {
-      cancelAnimationFrame(raf);
+      cancelFrame(raf);
       wakeRef.current = null;
       canvas.removeEventListener('webglcontextlost', onContextLost);
       canvas.removeEventListener('webglcontextrestored', onContextRestored);
