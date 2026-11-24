@@ -1,0 +1,458 @@
+---
+import { SCENE } from '../../data/landing';
+import Lightfall from '../react/reactbits/Lightfall.jsx';
+import { MessageCircle, Mail, Table2, ClipboardList, CalendarDays, Receipt, Check } from '@lucide/astro';
+
+const ICONS = [MessageCircle, Mail, Table2, ClipboardList, CalendarDays, Receipt];
+
+// Serie simulada del gráfico (curva suave Catmull-Rom → Bézier).
+const series = [14, 18, 12, 22, 19, 27, 24, 31, 28, 36, 33, 41];
+const W = 300, H = 96, PAD = 6;
+const max = Math.max(...series) * 1.1;
+const pts = series.map((v, i) => [PAD + (i * (W - PAD * 2)) / (series.length - 1), H - PAD - (v / max) * (H - PAD * 2)] as const);
+const line = pts.map((p, i, a) => {
+	if (i === 0) return `M${p[0].toFixed(1)},${p[1].toFixed(1)}`;
+	const p0 = a[i - 2] ?? a[i - 1], p1 = a[i - 1], p2 = p, p3 = a[i + 1] ?? p;
+	const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+	const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+	return `C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+}).join(' ');
+---
+
+<section class="scene full" id="sistema" aria-labelledby="scene-title" data-scene>
+	<div class="scene-bg" aria-hidden="true">
+		<div class="scene-bg-view"><Lightfall client:visible dpr={1} mouseInteraction={false} holdToWarp={false} /></div>
+	</div>
+
+	<div class="scene-pin" data-scene-pin>
+		<header class="scene-head">
+			<h2 id="scene-title" class="title-lg">{SCENE.title}</h2>
+		</header>
+
+		<div class="scene-stage" data-stage role="img" aria-label="Demostración animada: mensajes, documentos y hojas de cálculo se ordenan en un flujo y terminan convertidos en un panel con indicadores.">
+			<svg class="scene-svg" data-svg aria-hidden="true"></svg>
+
+			{SCENE.sources.map((label, i) => {
+				const Icon = ICONS[i];
+				return (
+					<div class="sc-el" data-el={i}>
+						<div class="face face--src">
+							<span class="src-ico"><Icon size={18} stroke-width={1.8} aria-hidden="true" /></span>
+							<span class="src-label">{label}</span>
+						</div>
+						<div class={`face face--w face--w${i}`}>
+							{i < 3 && (
+								<>
+									<span class="k-label">{['Solicitudes', 'Respondidas', 'Tiempo medio'][i]}</span>
+									<span class="k-val"><span data-count={[128, 94, 18][i]}>{[128, 94, 18][i]}</span>{i === 2 ? ' min' : ''}</span>
+								</>
+							)}
+							{i === 3 && (
+								<>
+									<span class="k-label">Solicitudes por semana</span>
+									<svg viewBox={`0 0 ${W} ${H}`} class="mini-chart" preserveAspectRatio="none" aria-hidden="true">
+										<path d={line} data-chart-line fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+									</svg>
+								</>
+							)}
+							{i === 4 && (
+								<>
+									<span class="k-label">Embudo</span>
+									<ul class="mini-bars" role="list">
+										{[['Nuevas', 100], ['En curso', 64], ['Cerradas', 31]].map(([l, v]) => (
+											<li><span>{l}</span><i style={`--w:${v}%`} data-bar></i></li>
+										))}
+									</ul>
+								</>
+							)}
+							{i === 5 && (
+								<>
+									<span class="k-label">Pendientes</span>
+									<ul class="mini-tasks" role="list">
+										{['Responder consulta', 'Enviar cotización', 'Confirmar reserva'].map((t) => (
+											<li data-task><span class="tk"><Check size={12} stroke-width={3} aria-hidden="true" /></span>{t}</li>
+										))}
+									</ul>
+								</>
+							)}
+						</div>
+					</div>
+				);
+			})}
+
+			{SCENE.nodes.map((label, i) => (
+				<div class="sc-node" data-node={i}>
+					<span class="n-num">{i + 1}</span>
+					<span class="n-label">{label}</span>
+				</div>
+			))}
+
+			<div class="sc-auri" data-auri aria-hidden="true"></div>
+		</div>
+
+		<p class="scene-caption" data-caption aria-live="polite">{SCENE.captions[3]}</p>
+	</div>
+</section>
+
+<script type="application/json" id="scene-captions" set:html={JSON.stringify(SCENE.captions)} />
+
+<style>
+	.scene {
+		display: block;
+		padding-block: 0;
+		overflow: visible;
+		background: var(--nx-ink);
+	}
+
+	/* Fondo Lightfall (React Bits) con sus colores de fábrica. Va pegado a la ventana mientras dura la escena. */
+	.scene-bg {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+	}
+
+	.scene-bg-view {
+		position: sticky;
+		top: 0;
+		height: 100svh;
+		max-height: 100%;
+	}
+
+	.scene-pin {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		align-content: center;
+		gap: clamp(1rem, 2.4vw, 1.8rem);
+		min-height: 100svh;
+		padding: 1.5rem var(--gutter);
+		max-width: calc(var(--content-max) + var(--gutter) * 2);
+		margin-inline: auto;
+	}
+
+	.scene-head {
+		display: grid;
+		gap: 0.9rem;
+		justify-items: center;
+		text-align: center;
+	}
+
+	.scene-head .title-lg {
+		max-width: 22ch;
+	}
+
+	/* ---- Escenario ---- */
+	.scene-stage {
+		position: relative;
+		width: 100%;
+		min-height: 460px;
+		height: clamp(460px, 62vh, 560px);
+		margin-inline: auto;
+	}
+
+	.scene-svg {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		overflow: visible;
+		pointer-events: none;
+	}
+
+	/* Vidrio líquido, como la barra: tinte translúcido, borde de luz y reflejo especular arriba a la izquierda. */
+	.sc-el,
+	.sc-node {
+		--glass-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.34),
+			inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+			inset 0 0 22px rgba(255, 255, 255, 0.05),
+			0 14px 34px -14px rgba(0, 0, 0, 0.75);
+		border: 1px solid rgba(255, 255, 255, 0.16);
+		border-radius: var(--radius-xl);
+		background:
+			radial-gradient(70% 90% at 6% 0%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 65%),
+			linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 45%, rgba(255, 255, 255, 0.07) 100%),
+			rgba(10, 10, 11, 0.3);
+		-webkit-backdrop-filter: blur(14px) saturate(180%);
+		backdrop-filter: blur(14px) saturate(180%);
+		box-shadow: var(--glass-shadow);
+	}
+
+	.face {
+		position: absolute;
+		inset: 0;
+	}
+
+	.face--src {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		padding: 0 0.9rem;
+	}
+
+	.src-ico {
+		display: grid;
+		place-items: center;
+		flex: none;
+		width: 32px;
+		height: 32px;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 10px;
+		background: linear-gradient(145deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.05) 60%, rgba(255, 255, 255, 0.12));
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 4px 12px -5px rgba(0, 0, 0, 0.6);
+		color: var(--nx-white);
+	}
+
+	.src-label {
+		font-size: 0.85rem;
+		font-weight: 600;
+		white-space: nowrap;
+	}
+
+	.face--w {
+		display: grid;
+		align-content: center;
+		gap: 0.5rem;
+		padding: 1rem 1.1rem;
+	}
+
+	.k-label {
+		font-family: var(--font-mono);
+		font-size: 0.64rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--foreground-muted);
+	}
+
+	.k-val {
+		font-family: var(--font-display);
+		font-weight: 800;
+		font-size: clamp(1.4rem, 2.4vw, 2rem);
+		letter-spacing: -0.04em;
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.mini-chart {
+		width: 100%;
+		height: 100%;
+		min-height: 0;
+		flex: 1;
+	}
+
+	.face--w3 {
+		grid-template-rows: auto 1fr;
+	}
+
+	.mini-bars,
+	.mini-tasks {
+		display: grid;
+		gap: 0.45rem;
+		list-style: none;
+	}
+
+	.mini-bars li {
+		display: grid;
+		grid-template-columns: 4.4rem 1fr;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.72rem;
+		color: var(--foreground-muted);
+	}
+
+	.mini-bars i {
+		display: block;
+		height: 8px;
+		width: var(--w);
+		border-radius: 999px;
+		background: var(--accent);
+		transform-origin: left;
+	}
+
+	.mini-tasks li {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-width: 0;
+		font-size: 0.78rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	/* En pantalla ancha las tareas van en fila para que ninguna toque el borde de arriba o abajo. */
+	.face--w5 .mini-tasks {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.6rem;
+	}
+
+	.face--w5 .mini-tasks li {
+		padding: 0.45rem 0.6rem;
+		border: 1px solid rgba(255, 255, 255, 0.14);
+		border-radius: 999px;
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+	}
+
+	.tk {
+		display: grid;
+		place-items: center;
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		background: var(--accent);
+		color: var(--nx-ink);
+	}
+
+	.sc-node {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		align-items: center;
+		gap: 0.1rem 0.6rem;
+		padding: 0.6rem 0.8rem;
+		border-color: rgba(255, 255, 255, 0.26);
+	}
+
+	.n-num {
+		display: grid;
+		place-items: center;
+		grid-row: span 2;
+		width: 26px;
+		height: 26px;
+		border-radius: 50%;
+		background: var(--accent);
+		color: var(--nx-ink);
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		font-weight: 600;
+	}
+
+	.n-label {
+		font-size: 0.8rem;
+		font-weight: 600;
+		line-height: 1.2;
+	}
+
+	.sc-node.is-on {
+		box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.22), var(--glass-shadow);
+	}
+
+	/* Auri en la escena: la misma bola del hero (cuerpo negro, aro de oro, ojos dorados). */
+	.sc-auri {
+		position: absolute;
+		z-index: 3;
+		width: 44px;
+		height: 44px;
+		border-radius: 50%;
+		background: var(--nx-ink);
+		border: 1px solid rgba(212, 175, 55, 0.55);
+		box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.12), 0 8px 22px -6px rgba(0, 0, 0, 0.6), 0 0 22px rgba(212, 175, 55, 0.35);
+	}
+
+	.sc-auri::before,
+	.sc-auri::after {
+		content: '';
+		position: absolute;
+		top: 41%;
+		width: 10.8%;
+		height: 18%;
+		border-radius: 999px;
+		background: var(--nx-gold-300);
+		animation: sc-blink 4.2s infinite;
+	}
+
+	.sc-auri::before { left: 35.1%; }
+	.sc-auri::after { left: 54.1%; }
+
+	@keyframes sc-blink {
+		0%, 92%, 100% { transform: scaleY(1); }
+		96% { transform: scaleY(0.12); }
+	}
+
+	.scene-caption {
+		min-height: 3.2em;
+		max-width: 56ch;
+		margin-inline: auto;
+		text-align: center;
+		font-size: clamp(1rem, 1.6vw, 1.2rem);
+		font-weight: 500;
+		text-wrap: balance;
+	}
+
+	/* ---- Sin movimiento (o sin JavaScript): el resultado final, ya armado. ---- */
+	.scene-stage:not(.is-live) {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.9rem;
+		height: auto;
+		align-content: center;
+	}
+
+	.scene-stage:not(.is-live) .face--src,
+	.scene-stage:not(.is-live) .sc-node,
+	.scene-stage:not(.is-live) .sc-auri,
+	.scene-stage:not(.is-live) .scene-svg {
+		display: none;
+	}
+
+	.scene-stage:not(.is-live) .sc-el {
+		position: relative;
+		min-height: 96px;
+	}
+
+	.scene-stage:not(.is-live) .face--w {
+		position: relative;
+		inset: auto;
+	}
+
+	.scene-stage:not(.is-live) [data-el='3'] {
+		grid-column: span 2;
+		min-height: 180px;
+	}
+
+	.scene-stage:not(.is-live) [data-el='5'] {
+		grid-column: 1 / -1;
+	}
+
+	/* ---- Modo vivo (lo activa el script) ---- */
+	.scene-stage.is-live .sc-el,
+	.scene-stage.is-live .sc-node {
+		position: absolute;
+		left: 0;
+		top: 0;
+		overflow: hidden;
+		will-change: transform;
+	}
+
+	.scene-stage.is-live .sc-node {
+		overflow: visible;
+	}
+
+	@media (max-width: 759px) {
+		.scene-stage {
+			height: 560px;
+		}
+
+		.scene-stage:not(.is-live) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.scene-stage:not(.is-live) [data-el='3'] {
+			grid-column: 1 / -1;
+		}
+
+		.face--w5 .mini-tasks {
+			grid-template-columns: 1fr;
+			gap: 0.4rem;
+		}
+
+		.src-label {
+			font-size: 0.74rem;
+		}
+
+		.src-ico {
+			width: 26px;
+			height: 26px;
+		}
+	}
+</style>

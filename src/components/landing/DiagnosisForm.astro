@@ -1,0 +1,637 @@
+---
+import { FORM, CTA } from '../../data/landing';
+import { WHATSAPP_NUMBER } from '../../data/site';
+import LiquidEther from '../react/LiquidEther';
+import FormAuri from '../react/FormAuri';
+
+const F = FORM.fields;
+---
+
+<section class="full final" id="diagnostico" aria-labelledby="final-title">
+	<div class="final-bg" aria-hidden="true"><LiquidEther client:visible /></div>
+	<div class="container">
+	<div class="final-inner">
+		<div class="final-copy" data-head>
+			<h2 id="final-title" class="title-lg final-title">{FORM.title}</h2>
+			<p class="lead final-lead">{FORM.lead}</p>
+
+		</div>
+
+		<div class="card glass-lg">
+			<FormAuri client:visible />
+			<form class="form" novalidate data-diag data-wa={WHATSAPP_NUMBER}>
+				<div class="field">
+					<label for="f-name">{F.name.label}</label>
+					<input id="f-name" name="name" type="text" autocomplete="name" placeholder={F.name.placeholder} required aria-describedby="e-name" />
+					<p class="err" id="e-name" role="alert" hidden>{F.name.error}</p>
+				</div>
+
+				<div class="field">
+					<label for="f-business">{F.business.label}</label>
+					<input id="f-business" name="business" type="text" autocomplete="organization" placeholder={F.business.placeholder} required aria-describedby="e-business" />
+					<p class="err" id="e-business" role="alert" hidden>{F.business.error}</p>
+				</div>
+
+				<div class="field">
+					<label id="l-topic" for="f-topic">{F.topic.label}</label>
+					<div class="sel" data-sel>
+						<select id="f-topic-native" name="topic" required tabindex="-1" aria-hidden="true">
+							<option value="" disabled selected>{F.topic.placeholder}</option>
+							{F.topic.options.map((o) => <option value={o}>{o}</option>)}
+						</select>
+						<button type="button" id="f-topic" class="sel-btn" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="topic-list" aria-labelledby="l-topic f-topic" aria-describedby="e-topic" data-sel-btn>
+							<span class="sel-val is-empty" data-sel-val>{F.topic.placeholder}</span>
+							<svg class="sel-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+						</button>
+						<ul id="topic-list" class="sel-list" role="listbox" aria-labelledby="l-topic" tabindex="-1" hidden data-sel-list>
+							{F.topic.options.map((o) => (
+								<li role="option" aria-selected="false" data-value={o}>
+									<span>{o}</span>
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+								</li>
+							))}
+						</ul>
+					</div>
+					<p class="err" id="e-topic" role="alert" hidden>{F.topic.error}</p>
+				</div>
+
+				<div class="field">
+					<label for="f-message">{F.message.label}</label>
+					<textarea id="f-message" name="message" rows="3" placeholder={F.message.placeholder} required minlength="10" aria-describedby="h-message e-message"></textarea>
+					<p class="help" id="h-message">{F.message.help}</p>
+					<p class="err" id="e-message" role="alert" hidden>{F.message.error}</p>
+				</div>
+
+				<button type="submit" class="btn btn--accent submit" data-cta="form-diagnostico">
+					<span data-submit-label>{CTA.send}</span>
+					<svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+				</button>
+				<p class="privacy">{FORM.privacy} <a href="/privacidad">Política de privacidad</a></p>
+			</form>
+
+			<div class="done" data-done hidden role="status" tabindex="-1">
+				<span class="done-icon" aria-hidden="true">
+					<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+				</span>
+				<h3>{FORM.success.title}</h3>
+				<p>{FORM.success.text}</p>
+				<a class="btn btn--accent" href="#" target="_blank" rel="noopener" data-wa-retry data-cta="form-whatsapp-retry">{FORM.success.retry}</a>
+			</div>
+
+			<p class="fail" data-fail hidden role="alert">{FORM.failure}</p>
+		</div>
+
+	</div>
+	</div>
+</section>
+
+<script>
+	// El formulario no tiene servidor: arma el mensaje y abre WhatsApp con el número del sitio.
+	const TOPIC_BY_SERVICE: Record<string, string> = {
+		software: 'Software a medida',
+		automatizacion: 'Automatizar procesos repetitivos',
+		ia: 'IA para clasificar, resumir o redactar',
+		datos: 'Datos, paneles y control',
+		claridad: 'No lo tengo claro todavía',
+	};
+
+	const form = document.querySelector<HTMLFormElement>('[data-diag]');
+	if (form) {
+		const done = document.querySelector<HTMLElement>('[data-done]')!;
+		const fail = document.querySelector<HTMLElement>('[data-fail]')!;
+		const retry = done.querySelector<HTMLAnchorElement>('[data-wa-retry]')!;
+		const topic = form.querySelector<HTMLSelectElement>('#f-topic-native')!;
+		const selBtn = form.querySelector<HTMLButtonElement>('[data-sel-btn]')!;
+		const selVal = form.querySelector<HTMLElement>('[data-sel-val]')!;
+		const selList = form.querySelector<HTMLUListElement>('[data-sel-list]')!;
+		const opts = [...selList.querySelectorAll<HTMLLIElement>('[role=option]')];
+		const placeholder = selVal.textContent ?? '';
+		let active = -1;
+
+		// El menú es propio (no el del navegador): el <select> nativo queda oculto y guarda el valor.
+		const syncSel = () => {
+			const v = topic.value;
+			selVal.textContent = v || placeholder;
+			selVal.classList.toggle('is-empty', !v);
+			opts.forEach((o) => o.setAttribute('aria-selected', String(o.dataset.value === v)));
+		};
+		const setActive = (i: number) => {
+			active = Math.max(0, Math.min(opts.length - 1, i));
+			opts.forEach((o, k) => o.classList.toggle('is-active', k === active));
+			opts[active].scrollIntoView({ block: 'nearest' });
+			selBtn.setAttribute('aria-activedescendant', opts[active].id || (opts[active].id = `topic-o${active}`));
+		};
+		const openSel = () => {
+			selList.hidden = false;
+			selBtn.setAttribute('aria-expanded', 'true');
+			setActive(Math.max(0, opts.findIndex((o) => o.dataset.value === topic.value)));
+		};
+		const closeSel = (refocus = false) => {
+			selList.hidden = true;
+			selBtn.setAttribute('aria-expanded', 'false');
+			selBtn.removeAttribute('aria-activedescendant');
+			if (refocus) selBtn.focus();
+		};
+		const choose = (i: number) => {
+			topic.value = opts[i].dataset.value ?? '';
+			syncSel();
+			check('topic');
+			closeSel(true);
+		};
+		selBtn.addEventListener('click', () => (selList.hidden ? openSel() : closeSel()));
+		opts.forEach((o, i) => {
+			o.addEventListener('mousedown', (e) => e.preventDefault()); // conserva el foco en el botón
+			o.addEventListener('mousemove', () => active !== i && setActive(i));
+			o.addEventListener('click', () => choose(i));
+		});
+		selBtn.addEventListener('keydown', (e) => {
+			const open = !selList.hidden;
+			if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+				e.preventDefault();
+				if (!open) openSel();
+				else setActive(active + (e.key === 'ArrowDown' ? 1 : -1));
+			} else if (e.key === 'Home' && open) { e.preventDefault(); setActive(0); }
+			else if (e.key === 'End' && open) { e.preventDefault(); setActive(opts.length - 1); }
+			else if ((e.key === 'Enter' || e.key === ' ') && open) { e.preventDefault(); choose(active); }
+			else if (e.key === 'Escape' && open) { e.preventDefault(); closeSel(); }
+			else if (e.key === 'Tab' && open) closeSel();
+		});
+		document.addEventListener('pointerdown', (e) => {
+			if (!selList.hidden && !(e.target as Element).closest('[data-sel]')) closeSel();
+		});
+		const label = form.querySelector<HTMLElement>('[data-submit-label]')!;
+		const idleLabel = label.textContent ?? '';
+		let sector = '';
+
+		const apply = (query: string) => {
+			const q = new URLSearchParams(query);
+			const s = q.get('servicio');
+			if (s && TOPIC_BY_SERVICE[s]) { topic.value = TOPIC_BY_SERVICE[s]; syncSel(); }
+			const sec = q.get('sector');
+			if (sec) sector = sec;
+		};
+
+		// Enlaces de Auri y de los ejemplos: llegan con ?servicio= o ?sector= en el ancla.
+		document.addEventListener('click', (e) => {
+			const a = (e.target as HTMLElement).closest?.('a[href*="#diagnostico?"]') as HTMLAnchorElement | null;
+			if (a) apply(a.getAttribute('href')!.split('?')[1] ?? '');
+		});
+		if (location.hash.includes('?')) apply(location.hash.split('?')[1]);
+
+		const fields = ['name', 'business', 'topic', 'message'] as const;
+		const check = (name: (typeof fields)[number]) => {
+			const native = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+			const el = (name === 'topic' ? selBtn : native) as HTMLElement;
+			const err = form.querySelector<HTMLElement>(`#e-${name}`)!;
+			const v = native.value.trim();
+			const ok = name === 'message' ? v.length >= 10 : v.length > 0;
+			err.hidden = ok;
+			el.setAttribute('aria-invalid', String(!ok));
+			return ok;
+		};
+
+		fields.forEach((n) => {
+			const el = (n === 'topic' ? selBtn : form.elements.namedItem(n)) as HTMLElement;
+			el.addEventListener('blur', () => check(n));
+			el.addEventListener('input', () => el.getAttribute('aria-invalid') === 'true' && check(n));
+		});
+
+		const waUrl = (d: Record<string, string>) => {
+			const lines = [
+				`Hola NEXUS THRIVE, quiero hablar de mi proyecto.`,
+				``,
+				`Nombre: ${d.name}`,
+				`Negocio: ${d.business}`,
+				...(sector ? [`Sector: ${sector}`] : []),
+				`Tema: ${d.topic}`,
+				`Qué quiero mejorar: ${d.message}`,
+			];
+			return `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(lines.join('\n'))}`;
+		};
+
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			fail.hidden = true;
+			const results = fields.map(check);
+			if (results.includes(false)) {
+				(form.querySelector('[aria-invalid="true"]') as HTMLElement | null)?.focus();
+				return;
+			}
+			const d = Object.fromEntries(fields.map((n) => [n, (form.elements.namedItem(n) as HTMLInputElement).value.trim()]));
+			const url = waUrl(d);
+			label.textContent = 'Preparando tu mensaje…';
+			(form.querySelector('.submit') as HTMLButtonElement).disabled = true;
+
+			window.setTimeout(() => {
+				const w = window.open(url, '_blank', 'noopener');
+				(window as any).plausible?.('diagnostico_enviado', { props: { tema: d.topic } });
+				form.hidden = true;
+				retry.href = url;
+				if (!w) fail.hidden = false;
+				done.hidden = false;
+				done.focus();
+			}, 450);
+		});
+	}
+</script>
+
+<style>
+	/* Éter líquido dorado a sangre; el formulario es una tarjeta de vidrio. */
+	.final-bg {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		-webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+		mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+	}
+
+	/* Velo para que el texto se lea sobre el movimiento. */
+	.final-bg::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(90deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.15) 70%);
+	}
+
+	.final-inner {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+		gap: clamp(1.8rem, 5vw, 4rem);
+		align-items: center;
+	}
+
+	.final-copy {
+		display: grid;
+		gap: 1.3rem;
+	}
+
+	.final-title {
+		color: var(--nx-paper);
+	}
+
+	.final-lead {
+		color: rgba(255, 255, 255, 0.78);
+	}
+
+	/* ---- formulario: tarjeta de vidrio oscuro ---- */
+	.card {
+		--foreground: var(--nx-paper);
+		--foreground-muted: var(--nx-graphite-350);
+		position: relative;
+		display: grid;
+		gap: 1.1rem;
+		padding: clamp(1.2rem, 3vw, 1.9rem);
+		border: 1px solid rgba(255, 255, 255, 0.16);
+		border-radius: var(--radius-widget);
+		background:
+			linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03) 50%, rgba(255, 255, 255, 0.08)),
+			rgba(12, 12, 13, 0.5);
+		-webkit-backdrop-filter: blur(22px) saturate(170%);
+		backdrop-filter: blur(22px) saturate(170%);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 0 30px rgba(255, 255, 255, 0.03), 0 30px 70px -28px rgba(0, 0, 0, 0.85);
+		color: var(--nx-paper);
+	}
+
+	/* Reflejo especular de la esquina superior. */
+	.card::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		background: radial-gradient(70% 45% at 8% 0%, rgba(255, 255, 255, 0.16), transparent 70%);
+		pointer-events: none;
+	}
+
+	.card > * {
+		position: relative;
+	}
+
+	:global(.fa) {
+		display: flex;
+		align-items: center;
+		gap: 0.8rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	:global(.fa-face) {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 58px;
+		height: 58px;
+		border-radius: 50%;
+		background: rgba(10, 10, 11, 0.6);
+		border: 1px solid rgba(212, 175, 55, 0.45);
+		box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1), 0 0 22px rgba(212, 175, 55, 0.25);
+	}
+
+	:global(.fa-bubble) {
+		min-height: 2.9em;
+		padding: 0.6rem 0.9rem;
+		border: 1px solid rgba(255, 255, 255, 0.14);
+		border-radius: 6px 18px 18px 18px;
+		background: rgba(255, 255, 255, 0.07);
+		font-size: 0.88rem;
+		line-height: 1.4;
+		color: var(--nx-paper);
+	}
+
+	:global(.fa-caret) {
+		display: inline-block;
+		width: 2px;
+		height: 1em;
+		margin-left: 2px;
+		vertical-align: -0.12em;
+		background: var(--nx-gold-500);
+		animation: fa-blink 1s steps(1) infinite;
+	}
+
+	@keyframes fa-blink {
+		50% { opacity: 0; }
+	}
+
+	.form {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: clamp(0.6rem, 1.6vh, 1rem) 0.9rem;
+	}
+
+	.form > * {
+		grid-column: 1 / -1;
+	}
+
+	.form > .field:nth-child(-n + 2) {
+		grid-column: span 1;
+	}
+
+	.field {
+		align-content: start;
+		display: grid;
+		gap: 0.4rem;
+	}
+
+	.field label {
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--foreground);
+	}
+
+	.field input,
+	.field select,
+	.field textarea {
+		width: 100%;
+		min-height: 48px;
+		padding: 0.7rem 1rem;
+		border: 1px solid var(--border-input);
+		border-radius: var(--radius-md);
+		background: rgba(255, 255, 255, 0.07);
+		color: var(--foreground);
+		/* 16px mínimo: evita el zoom automático de iOS */
+		font: 400 16px/1.4 var(--font-sans);
+		transition: border-color var(--d2) var(--ease), box-shadow var(--d2) var(--ease), background-color var(--d2) var(--ease);
+	}
+
+	.field textarea {
+		resize: vertical;
+		min-height: 84px;
+	}
+
+	.field select {
+		appearance: none;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right 0.9rem center;
+		padding-right: 2.6rem;
+	}
+
+	.field ::placeholder {
+		color: var(--foreground-muted);
+		opacity: 0.65;
+	}
+
+	.field input:hover,
+	.field select:hover,
+	.field textarea:hover {
+		border-color: var(--border-strong);
+	}
+
+	.field input:focus,
+	.field select:focus,
+	.field textarea:focus {
+		outline: none;
+		background: rgba(255, 255, 255, 0.11);
+		border-color: var(--nx-gold-500);
+		box-shadow: var(--nx-shadow-focus);
+	}
+
+	/* ---- selector propio: el <select> nativo queda oculto y guarda el valor ---- */
+	.sel {
+		position: relative;
+	}
+
+	.sel select {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.sel-btn {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.6rem;
+		width: 100%;
+		min-height: 48px;
+		padding: 0.7rem 1rem;
+		border: 1px solid var(--border-input);
+		border-radius: var(--radius-md);
+		background: rgba(255, 255, 255, 0.07);
+		color: var(--foreground);
+		font: 400 16px/1.4 var(--font-sans);
+		text-align: left;
+		cursor: pointer;
+		transition: border-color var(--d2) var(--ease), box-shadow var(--d2) var(--ease), background-color var(--d2) var(--ease);
+	}
+
+	.sel-btn:hover {
+		border-color: var(--border-strong);
+	}
+
+	.sel-btn:focus-visible,
+	.sel-btn[aria-expanded='true'] {
+		outline: none;
+		background: rgba(255, 255, 255, 0.11);
+		border-color: var(--nx-gold-500);
+		box-shadow: var(--nx-shadow-focus);
+	}
+
+	.sel-btn[aria-invalid='true'] {
+		border-color: #d4554d;
+	}
+
+	.sel-val.is-empty {
+		color: var(--foreground-muted);
+		opacity: 0.65;
+	}
+
+	.sel-chev {
+		flex: none;
+		color: var(--foreground-muted);
+		transition: transform var(--d2) var(--nx-ease-out);
+	}
+
+	.sel-btn[aria-expanded='true'] .sel-chev {
+		transform: rotate(180deg);
+		color: var(--nx-gold-500);
+	}
+
+	/* Menú de vidrio oscuro que se abre bajo el botón. */
+	.sel-list {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: calc(100% + 0.4rem);
+		z-index: 20;
+		display: grid;
+		gap: 0.15rem;
+		max-height: 17rem;
+		overflow-y: auto;
+		padding: 0.35rem;
+		border: 1px solid rgba(255, 255, 255, 0.16);
+		border-radius: var(--radius-lg);
+		background:
+			linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)),
+			rgba(14, 14, 16, 0.9);
+		-webkit-backdrop-filter: blur(22px) saturate(170%);
+		backdrop-filter: blur(22px) saturate(170%);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 24px 50px -16px rgba(0, 0, 0, 0.9);
+		list-style: none;
+		animation: sel-in 180ms var(--nx-ease-out);
+	}
+
+	.sel-list[hidden] {
+		display: none;
+	}
+
+	@keyframes sel-in {
+		from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+	}
+
+	.sel-list li {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.6rem;
+		padding: 0.65rem 0.8rem;
+		border-radius: var(--radius-md);
+		font-size: 0.92rem;
+		color: var(--foreground);
+		cursor: pointer;
+	}
+
+	.sel-list li svg {
+		flex: none;
+		color: var(--nx-gold-500);
+		opacity: 0;
+	}
+
+	.sel-list li.is-active {
+		background: rgba(255, 255, 255, 0.1);
+	}
+
+	.sel-list li[aria-selected='true'] {
+		background: var(--accent-subtle);
+	}
+
+	.sel-list li[aria-selected='true'] svg {
+		opacity: 1;
+	}
+
+	.field [aria-invalid='true'] {
+		border-color: #d4554d;
+	}
+
+	.help {
+		font-size: 0.78rem;
+		color: var(--foreground-muted);
+	}
+
+	.err {
+		font-size: 0.8rem;
+		color: #ff8d83;
+	}
+
+	.submit {
+		margin-top: 0.3rem;
+		width: 100%;
+	}
+
+	.submit:disabled {
+		opacity: 0.7;
+		cursor: progress;
+	}
+
+	.privacy {
+		font-size: 0.78rem;
+		color: var(--foreground-muted);
+	}
+
+	.privacy a {
+		color: var(--foreground);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.done {
+		display: grid;
+		justify-items: start;
+		gap: 0.9rem;
+		outline: none;
+	}
+
+	.done h3 {
+		font-family: var(--font-display);
+		font-size: 1.5rem;
+		font-weight: 700;
+		letter-spacing: -0.03em;
+	}
+
+	.done p {
+		color: var(--foreground-muted);
+	}
+
+	.done-icon {
+		display: grid;
+		place-items: center;
+		width: 52px;
+		height: 52px;
+		border-radius: var(--radius-md);
+		background: var(--accent);
+		color: var(--nx-ink);
+	}
+
+	.fail {
+		margin-top: 1rem;
+		padding: 0.8rem 1rem;
+		border: 1px solid #d4554d;
+		border-radius: var(--radius-md);
+		font-size: 0.88rem;
+		color: #ff8d83;
+	}
+
+	@media (max-width: 899px) {
+		.final-inner {
+			grid-template-columns: 1fr;
+		}
+
+		.form > .field:nth-child(-n + 2) {
+			grid-column: 1 / -1;
+		}
+	}
+</style>

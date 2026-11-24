@@ -1,0 +1,920 @@
+---
+import SectionBackground from '../react/SectionBackground';
+import { CAPABILITIES, CAPABILITIES_SECTION } from '../../data/landing';
+import { CodeXml, Workflow, Sparkles, ChartColumn } from '@lucide/astro';
+
+const ICONS = { software: CodeXml, automatizacion: Workflow, ia: Sparkles, datos: ChartColumn } as const;
+
+// Serie simulada del gráfico de ingresos (curva suave Catmull-Rom → Bézier).
+const series = [14, 18, 12, 22, 19, 27, 24, 31, 28, 36, 33, 41];
+const W = 300, H = 96, PAD = 6;
+const max = Math.max(...series) * 1.1;
+const pts = series.map((v, i) => [PAD + (i * (W - PAD * 2)) / (series.length - 1), H - PAD - (v / max) * (H - PAD * 2)] as const);
+const line = pts.map((p, i, a) => {
+	if (i === 0) return `M${p[0].toFixed(1)},${p[1].toFixed(1)}`;
+	const p0 = a[i - 2] ?? a[i - 1], p1 = a[i - 1], p2 = p, p3 = a[i + 1] ?? p;
+	const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+	const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+	return `C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+}).join(' ');
+const area = `${line} L${pts[pts.length - 1][0]},${H} L${pts[0][0]},${H} Z`;
+const R = 38, C = 2 * Math.PI * R;
+---
+
+<section class="full caps" id="servicios" aria-labelledby="caps-title" data-caps>
+	<div class="full-bg" aria-hidden="true"><SectionBackground client:load kind="hebras" /></div>
+	<div class="container caps-in">
+		<header class="caps-head" data-head>
+			<h2 id="caps-title" class="title-lg">{CAPABILITIES_SECTION.title}</h2>
+		</header>
+
+		<div class="bento">
+			{CAPABILITIES.map((c, i) => {
+				const Icon = ICONS[c.id as keyof typeof ICONS];
+				return (
+					<article class={`cap cap--${c.id}`} data-cap>
+						<div class="cap-copy">
+							<span class="cap-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+							<span class="icon-tile cap-ico"><Icon size={22} stroke-width={1.7} aria-hidden="true" /></span>
+							<h3 class="cap-title">{c.title}</h3>
+							<p>{c.text}</p>
+						</div>
+
+						<div class="vis glass-lg" aria-hidden="true" data-w={c.widget}>
+							{c.widget === 'build' && (
+								<div class="wb-win" data-b-win>
+									<div class="wb-bar"><i></i><i></i><i></i><span class="wb-url"></span><span class="wb-badge" data-b-badge>Publicado</span></div>
+									<div class="wb-body">
+										<aside class="wb-side">
+											{['Resumen', 'Clientes', 'CRM', 'Ventas'].map((l, i) => <span data-b class={i === 0 ? 'on' : ''}><i></i>{l}</span>)}
+										</aside>
+										<div class="wb-main">
+											<div class="wb-hero" data-b>
+												<div><b>Buenas tardes</b><small>Todo al día. Buen momento para adelantar.</small></div>
+												<span class="wb-orb"><i></i><i></i></span>
+											</div>
+											<div class="wb-kpis">
+												<div data-b><span>Pedidos</span><b data-b-num="128">128</b></div>
+												<div data-b><span>Clientes</span><b data-b-num="64">64</b></div>
+												<div data-b class="gold" data-b-gold><span>Balance</span><b>$<em data-b-num="350">350</em>k</b><u><s data-b-bar></s><s data-b-bar></s><s data-b-bar></s><s data-b-bar></s><s data-b-bar></s></u></div>
+											</div>
+										</div>
+									</div>
+									<svg class="wb-cursor" data-b-cursor viewBox="0 0 24 24" width="22" height="22"><path d="M5 3l14 8-6 2-3 6z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+								</div>
+							)}
+
+							{c.widget === 'flow' && (
+								<svg viewBox="0 0 480 250" class="wf" data-flow>
+									<path class="wf-line" data-e d="M118,44 C158,44 150,125 190,125"></path>
+									<path class="wf-line" data-e d="M118,125 L190,125"></path>
+									<path class="wf-line" data-e d="M118,206 C158,206 150,125 190,125"></path>
+									<path class="wf-line" data-e d="M306,125 C340,125 336,64 372,64"></path>
+									<path class="wf-line" data-e d="M306,125 C340,125 336,186 372,186"></path>
+									{[['WhatsApp', 26], ['Correo', 107], ['Formulario', 188]].map(([l, y]) => (
+										<g class="wf-src" transform={`translate(10 ${y})`}><rect width="108" height="36" rx="12"></rect><circle cx="20" cy="18" r="6"></circle><text x="36" y="22">{l}</text></g>
+									))}
+									<g class="wf-node wf-node--mid" data-n transform="translate(190 93)">
+										<rect width="116" height="64" rx="16"></rect>
+										<circle cx="26" cy="32" r="13"></circle>
+										<path class="wf-spark" d="M26 24l2.2 5.8 5.8 2.2-5.8 2.2L26 40l-2.2-5.8L18 32l5.8-2.2z"></path>
+										<text x="48" y="29">Se clasifica</text><text class="sub" x="48" y="44">automático</text>
+									</g>
+									{[['Registro', 44], ['Aviso', 166]].map(([l, y]) => (
+										<g class="wf-node wf-out" data-n data-out transform={`translate(372 ${y})`}>
+											<rect width="100" height="40" rx="12"></rect>
+											<path class="wf-check" d="M14 20l5 5 9-10"></path>
+											<text x="38" y="25">{l}</text>
+										</g>
+									))}
+									{[0, 1, 2, 3].map(() => <circle class="wf-packet" r="5" data-p></circle>)}
+								</svg>
+							)}
+
+							{c.widget === 'ai' && (
+								<div class="wa">
+									<div class="wa-doc">
+										<div class="wa-doc-head"><span></span><b>Factura 0042</b></div>
+										{[92, 70, 84, 60, 78, 50].map((w) => <i data-l style={`--w:${w}%`}></i>)}
+										<span class="wa-scan" data-scan></span>
+									</div>
+									<ul class="wa-out" role="list">
+										{[['Cliente', 'Empresa Demo'], ['Fecha', '12 de marzo'], ['Valor', '$ 1.250.000'], ['Prioridad', 'Alta']].map(([k, v]) => (
+											<li data-chip><span>{k}</span><b>{v}</b></li>
+										))}
+									</ul>
+									<div class="wa-auri" data-auri><span class="wa-bubble" data-bubble>Clasificada</span><span class="wa-ball"><i></i><i></i></span></div>
+								</div>
+							)}
+
+							{c.widget === 'data' && (
+								<div class="wd">
+									<div class="wd-kpis">
+										<div data-d-k><span>Solicitudes</span><b data-d-num="128">128</b></div>
+										<div data-d-k><span>Respondidas</span><b data-d-num="94">94</b></div>
+										<div data-d-k><span>Tiempo medio</span><b><span data-d-num="18">18</span> min</b></div>
+									</div>
+									<div class="wd-row">
+										<div class="wd-gold" data-d-k>
+											<span>Ingresos · 30 días</span>
+											<b>$<em data-d-num="350">350</em>k</b>
+											<svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none"><path d={area} data-d-area fill="rgba(0,0,0,0.12)"></path><path d={line} data-d-line fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+										</div>
+										<div class="wd-donut" data-d-k>
+											<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r={R} fill="none" stroke="var(--surface-muted)" stroke-width="12"></circle><circle data-d-ring cx="50" cy="50" r={R} fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" transform="rotate(-90 50 50)" stroke-dasharray={`${C * 0.66} ${C}`}></circle></svg>
+											<div><span>Balance</span><b><em data-d-num="66">66</em>%</b></div>
+										</div>
+										<ul class="wd-bars" role="list">{[['Nuevas', 100], ['En curso', 64], ['Cerradas', 31]].map(([l, v]) => <li><span>{l}</span><i style={`--w:${v}%`} data-d-bar></i></li>)}</ul>
+									</div>
+								</div>
+							)}
+						</div>
+					</article>
+				);
+			})}
+		</div>
+
+		<nav class="caps-rail" aria-label="Elegir servicio">
+			{CAPABILITIES.map((c) => {
+				const Icon = ICONS[c.id as keyof typeof ICONS];
+				return <button type="button" class="glass-lg" data-cap-tab><Icon size={18} stroke-width={1.8} aria-hidden="true" /><span>{c.title}</span></button>;
+			})}
+		</nav>
+	</div>
+</section>
+
+<style>
+	.caps-in {
+		display: flex;
+		flex-direction: column;
+		gap: clamp(1rem, 3vh, 2rem);
+	}
+
+	.caps-head {
+		display: grid;
+		justify-items: center;
+		text-align: center;
+	}
+
+	.bento {
+		position: relative;
+		display: grid;
+		gap: 3rem;
+	}
+
+	/* Un servicio por pantalla: texto a un lado y su demostración, grande, al otro. */
+	.cap {
+		display: grid;
+		grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+		gap: clamp(1.5rem, 4vw, 4rem);
+		align-items: center;
+	}
+
+	.cap-copy {
+		position: relative;
+		display: grid;
+		gap: clamp(0.7rem, 2vh, 1.2rem);
+		justify-items: start;
+	}
+
+	.cap-n {
+		font-family: var(--font-display);
+		font-size: clamp(3rem, 12vh, 7.5rem);
+		font-weight: 800;
+		line-height: 0.85;
+		letter-spacing: -0.06em;
+		color: transparent;
+		-webkit-text-stroke: 1px rgba(255, 255, 255, 0.38);
+	}
+
+	.cap-title {
+		font-family: var(--font-display);
+		font-size: clamp(1.5rem, 2.9vw, 2.6rem);
+		font-weight: 700;
+		letter-spacing: -0.035em;
+		line-height: 1.06;
+		text-wrap: balance;
+	}
+
+	.cap-copy p {
+		max-width: 46ch;
+		font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+		color: rgba(255, 255, 255, 0.78);
+	}
+
+	.vis {
+		position: relative;
+		display: grid;
+		align-items: center;
+		min-height: clamp(260px, 46vh, 480px);
+		padding: clamp(0.9rem, 2vw, 1.8rem);
+		border-radius: var(--radius-sheet);
+		overflow: hidden;
+	}
+
+	/* Índice de servicios: cápsulas de vidrio; la activa se enciende. */
+	.caps-rail {
+		display: none;
+		justify-content: center;
+		gap: 0.6rem;
+	}
+
+	.caps-rail button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-height: 44px;
+		padding: 0 1.1rem;
+		border-radius: 999px;
+		font: 600 0.84rem/1 var(--font-sans);
+		color: rgba(255, 255, 255, 0.72);
+		cursor: pointer;
+		transition: color var(--d2) var(--ease);
+	}
+
+	.caps-rail button[aria-current='true'] {
+		color: var(--nx-gold-300);
+		border-color: rgba(212, 175, 55, 0.6) !important;
+	}
+
+	/* Modo vivo (lo activa caps-scene.ts): los cuatro en el mismo lugar. */
+	.caps.is-live {
+		height: 100svh;
+	}
+
+	.caps.is-live .caps-in {
+		flex: 1;
+		min-height: 0;
+	}
+
+	.caps.is-live .bento {
+		flex: 1;
+		min-height: 0;
+	}
+
+	.caps.is-live .cap {
+		grid-area: 1 / 1;
+		min-height: 0;
+		pointer-events: none;
+	}
+
+	.caps.is-live .cap.is-on {
+		pointer-events: auto;
+	}
+
+	.caps.is-live .caps-rail {
+		display: flex;
+	}
+
+	@media (max-width: 1099px) {
+		.caps-rail span {
+			display: none;
+		}
+	}
+
+	@media (max-width: 899px) {
+		.cap {
+			grid-template-columns: 1fr;
+			align-content: center;
+			gap: 1.2rem;
+		}
+
+		.vis {
+			min-height: 230px;
+		}
+
+		.cap-n {
+			position: absolute;
+			right: 0;
+			top: 0;
+			font-size: 3rem;
+		}
+	}
+
+	@media (min-width: 900px) {
+		.wb-main {
+			gap: 0.9rem !important;
+			padding: 1.1rem !important;
+		}
+
+		.wb-hero {
+			padding: 1.2rem !important;
+		}
+
+		.wb-kpis > div {
+			padding: 1rem !important;
+		}
+
+		.wa,
+		.wd {
+			zoom: 1.2;
+		}
+	}
+
+	/* ---------- 1 · Software: pantalla de NEXUS que se arma ---------- */
+	.wb-win {
+		position: relative;
+		border: 1px solid var(--border-strong);
+		border-radius: var(--radius-md);
+		background: rgba(0, 0, 0, 0.35);
+		box-shadow: var(--nx-shadow-md);
+		overflow: hidden;
+	}
+
+	.wb-bar {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0.5rem 0.7rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.wb-bar i {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: var(--border-strong);
+	}
+
+	.wb-url {
+		min-width: 7rem;
+		height: 14px;
+		margin-left: 0.6rem;
+		padding: 0;
+		border-radius: 999px;
+		background: var(--surface-muted);
+		font-family: var(--font-mono);
+		font-size: 0.62rem;
+		color: var(--foreground-muted);
+	}
+
+	.wb-badge {
+		margin-left: auto;
+		padding: 0.15rem 0.6rem;
+		border-radius: 999px;
+		background: var(--accent);
+		color: var(--nx-ink);
+		font-size: 0.66rem;
+		font-weight: 700;
+	}
+
+	.wb-body {
+		display: grid;
+		grid-template-columns: 112px minmax(0, 1fr);
+	}
+
+	.wb-side {
+		display: grid;
+		gap: 0.2rem;
+		align-content: start;
+		padding: 0.7rem 0.5rem;
+		border-right: 1px solid var(--border);
+	}
+
+	.wb-side span {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.38rem 0.5rem;
+		border-radius: 8px;
+		font-size: 0.7rem;
+		font-weight: 500;
+		color: var(--foreground-muted);
+	}
+
+	.wb-side span i {
+		width: 10px;
+		height: 10px;
+		border-radius: 3px;
+		background: var(--border-strong);
+	}
+
+	.wb-side span.on {
+		background: var(--accent-subtle);
+		color: var(--foreground);
+	}
+
+	.wb-side span.on i {
+		background: var(--accent);
+	}
+
+	.wb-main {
+		display: grid;
+		gap: 0.55rem;
+		padding: 0.7rem;
+	}
+
+	.wb-hero {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.8rem;
+		padding: 0.7rem 0.9rem;
+		border-radius: var(--radius-md);
+		background: linear-gradient(120deg, rgba(212, 175, 55, 0.22), rgba(212, 175, 55, 0.04));
+		border: 1px solid rgba(212, 175, 55, 0.25);
+	}
+
+	.wb-hero b {
+		display: block;
+		font-family: var(--font-display);
+		font-size: 1.05rem;
+		font-weight: 800;
+		letter-spacing: -0.03em;
+	}
+
+	.wb-hero small {
+		font-size: 0.66rem;
+		color: var(--foreground-muted);
+	}
+
+	.wb-orb {
+		position: relative;
+		flex: none;
+		width: 34px;
+		height: 34px;
+		border-radius: 50%;
+		background: var(--accent);
+		box-shadow: 0 0 0 6px rgba(212, 175, 55, 0.15);
+	}
+
+	.wb-orb i {
+		position: absolute;
+		top: 40%;
+		width: 15%;
+		height: 12%;
+		border-radius: 999px;
+		background: var(--nx-ink);
+	}
+
+	.wb-orb i:first-child { left: 30%; }
+	.wb-orb i:last-child { left: 56%; }
+
+	.wb-kpis {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.5rem;
+	}
+
+	.wb-kpis > div {
+		display: grid;
+		gap: 0.15rem;
+		padding: 0.55rem 0.65rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-md);
+		background: var(--surface);
+	}
+
+	.wb-kpis span {
+		font-size: 0.62rem;
+		color: var(--foreground-muted);
+	}
+
+	.wb-kpis b {
+		font-family: var(--font-display);
+		font-size: 1.15rem;
+		font-weight: 800;
+		letter-spacing: -0.04em;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.wb-kpis b em {
+		font-style: normal;
+	}
+
+	.wb-kpis .gold {
+		background: var(--accent);
+		border-color: transparent;
+		color: var(--nx-ink);
+	}
+
+	.wb-kpis .gold span {
+		color: rgba(0, 0, 0, 0.65);
+	}
+
+	.wb-kpis .gold u {
+		display: flex;
+		align-items: flex-end;
+		gap: 3px;
+		height: 14px;
+		text-decoration: none;
+	}
+
+	.wb-kpis .gold s {
+		flex: 1;
+		height: 100%;
+		border-radius: 2px;
+		background: rgba(0, 0, 0, 0.55);
+		transform-origin: bottom;
+		text-decoration: none;
+	}
+
+	.wb-kpis .gold s:nth-child(1) { height: 40%; }
+	.wb-kpis .gold s:nth-child(2) { height: 65%; }
+	.wb-kpis .gold s:nth-child(3) { height: 50%; }
+	.wb-kpis .gold s:nth-child(4) { height: 85%; }
+	.wb-kpis .gold s:nth-child(5) { height: 100%; }
+
+	.wb-cursor {
+		position: absolute;
+		left: 0;
+		top: 0;
+		z-index: 3;
+		filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
+		opacity: 0;
+	}
+
+	/* ---------- 2 · Automatización: flujo de automatización ---------- */
+	.wf {
+		width: 100%;
+		height: 100%;
+		max-height: 420px;
+	}
+
+	.wf-line {
+		fill: none;
+		stroke: var(--border-strong);
+		stroke-width: 2;
+		stroke-dasharray: 4 5;
+	}
+
+	.wf rect {
+		fill: var(--surface);
+		stroke: var(--border-strong);
+		stroke-width: 1.5;
+		transition: stroke var(--d2) var(--ease), filter var(--d2) var(--ease);
+	}
+
+	.wf text {
+		font-family: var(--font-sans);
+		font-size: 12px;
+		font-weight: 600;
+		fill: var(--foreground);
+	}
+
+	.wf text.sub {
+		font-size: 9.5px;
+		font-weight: 500;
+		fill: var(--foreground-muted);
+	}
+
+	.wf-src circle {
+		fill: var(--accent);
+	}
+
+	.wf-node--mid circle {
+		fill: var(--nx-ink);
+		stroke: rgba(212, 175, 55, 0.6);
+	}
+
+	.wf-spark {
+		fill: var(--nx-gold-300);
+	}
+
+	.wf-check {
+		fill: none;
+		stroke: var(--foreground-muted);
+		stroke-width: 2.4;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		transition: stroke var(--d2) var(--ease);
+		transform: scale(0.8);
+		transform-origin: 14px 20px;
+	}
+
+	.wf-node.is-on rect {
+		stroke: var(--accent);
+		filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.45));
+	}
+
+	.wf-node.is-on .wf-check {
+		stroke: var(--accent);
+	}
+
+	.wf-packet {
+		fill: #f6ebc4;
+		filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.9));
+		opacity: 0;
+	}
+
+	/* ---------- 3 · IA: documento que se lee y se clasifica ---------- */
+	.wa {
+		position: relative;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+		gap: 0.9rem;
+		align-items: center;
+		padding-bottom: 1.6rem;
+	}
+
+	.wa-doc {
+		position: relative;
+		display: grid;
+		gap: 0.5rem;
+		padding: 0.8rem;
+		border: 1px solid var(--border-strong);
+		border-radius: var(--radius-md);
+		background: var(--surface);
+		box-shadow: var(--nx-shadow-sm);
+		overflow: hidden;
+	}
+
+	.wa-doc-head {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		margin-bottom: 0.2rem;
+		font-size: 0.7rem;
+	}
+
+	.wa-doc-head span {
+		width: 18px;
+		height: 18px;
+		border-radius: 5px;
+		background: var(--accent-subtle);
+		border: 1px solid rgba(212, 175, 55, 0.4);
+	}
+
+	.wa-doc i {
+		display: block;
+		height: 7px;
+		width: var(--w);
+		border-radius: 999px;
+		background: var(--border-strong);
+		transition: background-color var(--d2) var(--ease);
+	}
+
+	.wa-doc i.is-read {
+		background: var(--accent);
+	}
+
+	.wa-scan {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		height: 2px;
+		background: var(--accent);
+		box-shadow: 0 0 14px 4px rgba(212, 175, 55, 0.5);
+		opacity: 0;
+	}
+
+	.wa-out {
+		display: grid;
+		gap: 0.45rem;
+		list-style: none;
+	}
+
+	.wa-out li {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.6rem;
+		padding: 0.5rem 0.75rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-md);
+		background: var(--surface);
+		font-size: 0.74rem;
+	}
+
+	.wa-out li span {
+		color: var(--foreground-muted);
+	}
+
+	.wa-out li b {
+		font-weight: 600;
+	}
+
+	.wa-auri {
+		position: absolute;
+		right: 0.2rem;
+		bottom: -0.2rem;
+		display: flex;
+		align-items: flex-end;
+		gap: 0.4rem;
+	}
+
+	.wa-bubble {
+		padding: 0.25rem 0.65rem;
+		border: 1px solid rgba(212, 175, 55, 0.4);
+		border-radius: 12px 12px 4px 12px;
+		background: var(--accent-subtle);
+		font-size: 0.68rem;
+		font-weight: 600;
+		color: var(--foreground);
+		opacity: 0;
+	}
+
+	.wa-ball {
+		position: relative;
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		background: var(--nx-ink);
+		border: 1px solid rgba(212, 175, 55, 0.55);
+		box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12), 0 0 14px rgba(212, 175, 55, 0.3);
+	}
+
+	.wa-ball i {
+		position: absolute;
+		top: 41%;
+		width: 11%;
+		height: 18%;
+		border-radius: 999px;
+		background: var(--nx-gold-300);
+	}
+
+	.wa-ball i:first-child { left: 35%; }
+	.wa-ball i:last-child { left: 54%; }
+
+	/* ---------- 4 · Datos: panel con tarjeta dorada, anillo y embudo ---------- */
+	.wd {
+		display: grid;
+		gap: 0.6rem;
+	}
+
+	.wd-kpis {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.5rem;
+	}
+
+	.wd-kpis > div {
+		display: grid;
+		gap: 0.15rem;
+		padding: 0.55rem 0.75rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-md);
+		background: var(--surface);
+	}
+
+	.wd-kpis span {
+		font-size: 0.64rem;
+		color: var(--foreground-muted);
+	}
+
+	.wd-kpis b span {
+		font-size: inherit;
+		color: inherit;
+	}
+
+	.wd-kpis b {
+		font-family: var(--font-display);
+		font-size: 1.3rem;
+		font-weight: 800;
+		letter-spacing: -0.04em;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.wd-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.9fr) minmax(0, 1fr);
+		gap: 0.5rem;
+		align-items: stretch;
+	}
+
+	.wd-gold {
+		position: relative;
+		display: grid;
+		gap: 0.15rem;
+		align-content: start;
+		padding: 0.65rem 0.8rem 0;
+		border-radius: var(--radius-md);
+		background: var(--accent);
+		color: var(--nx-ink);
+		overflow: hidden;
+	}
+
+	.wd-gold span {
+		font-size: 0.64rem;
+		color: rgba(0, 0, 0, 0.65);
+	}
+
+	.wd-gold b {
+		font-family: var(--font-display);
+		font-size: 1.3rem;
+		font-weight: 800;
+		letter-spacing: -0.04em;
+	}
+
+	.wd-gold b em {
+		font-style: normal;
+	}
+
+	.wd-gold svg {
+		width: calc(100% + 1.6rem);
+		margin: 0 -0.8rem;
+		height: 54px;
+	}
+
+	.wd-donut {
+		position: relative;
+		display: grid;
+		place-items: center;
+		padding: 0.5rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-md);
+		background: var(--surface);
+	}
+
+	.wd-donut svg {
+		width: 100%;
+		max-width: 92px;
+	}
+
+	.wd-donut div {
+		position: absolute;
+		display: grid;
+		justify-items: center;
+		gap: 0;
+		text-align: center;
+	}
+
+	.wd-donut span {
+		font-size: 0.58rem;
+		color: var(--foreground-muted);
+	}
+
+	.wd-donut b {
+		font-family: var(--font-display);
+		font-size: 0.95rem;
+		font-weight: 800;
+	}
+
+	.wd-donut b em {
+		font-style: normal;
+	}
+
+	.wd-bars {
+		display: grid;
+		gap: 0.5rem;
+		align-content: center;
+		padding: 0.6rem 0.7rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-md);
+		background: var(--surface);
+		list-style: none;
+	}
+
+	.wd-bars li {
+		display: grid;
+		gap: 0.2rem;
+		font-size: 0.62rem;
+		color: var(--foreground-muted);
+	}
+
+	.wd-bars i {
+		display: block;
+		height: 7px;
+		width: var(--w);
+		border-radius: 999px;
+		background: var(--accent);
+		transform-origin: left;
+	}
+
+	@media (max-width: 599px) {
+		.caps-head .title-lg {
+			font-size: 1.25rem;
+		}
+
+		.cap-copy p {
+			font-size: 0.9rem;
+			line-height: 1.5;
+		}
+
+		.wb-body {
+			grid-template-columns: 1fr;
+		}
+
+		.wb-side {
+			display: none;
+		}
+
+		/* Cada demostración cabe en la mitad de un teléfono. */
+		.wa {
+			grid-template-columns: 1fr;
+			gap: 0.6rem;
+			zoom: 0.82;
+		}
+
+		.wa-doc i:nth-of-type(n + 4) {
+			display: none;
+		}
+
+		.wa-out li {
+			padding-block: 0.3rem;
+		}
+
+		.wd {
+			zoom: 0.92;
+		}
+
+		.wd-row {
+			grid-template-columns: 1fr 1.3fr;
+		}
+
+		.wd-gold {
+			grid-column: 1 / -1;
+		}
+	}
+</style>

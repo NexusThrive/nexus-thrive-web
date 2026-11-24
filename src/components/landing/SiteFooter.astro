@@ -1,46 +1,56 @@
 ---
-import Logo from '../brand/Logo.astro';
+import DotLogo from '../react/DotLogo';
+import FooterBackground from '../react/FooterBackground';
 import { APP_URL, NAV, SOCIALS, whatsappLink } from '../../data/site';
+import { CAPABILITIES, CTA, FOOTER } from '../../data/landing';
 
 const year = new Date().getFullYear();
 ---
 
-<footer class="footer">
+<footer class="footer" data-footer>
+	<!-- Mismo fondo animado que el hero, fundido con el negro por arriba y por abajo. -->
+	<div class="footer-bg" aria-hidden="true">
+		<FooterBackground client:only="react" />
+		<span class="footer-fade"></span>
+	</div>
+
 	<div class="container footer-grid">
 		<div class="footer-brand">
-			<a href="/" class="footer-logo" aria-label="NEXUS THRIVE, inicio">
-				<Logo variant="lockup" size={64} title="NEXUS THRIVE" />
-			</a>
-			<p>Sistema operativo para tu negocio: operación, clientes y procesos conectados en una sola plataforma.</p>
+			<div class="footer-logo-dots">
+				<DotLogo client:visible label="Logo de NEXUS THRIVE hecho de puntos" />
+			</div>
+			<p class="footer-tag">{FOOTER.tagline.split(' · ').map((t) => <span>{t}</span>)}</p>
+			<a href="#diagnostico" class="btn btn--accent btn--sm footer-cta" data-cta="footer-diagnostico">{CTA.primary}</a>
 		</div>
 
 		<nav aria-label="Sitio" class="footer-col">
 			<h2>Sitio</h2>
 			<ul role="list">
 				{NAV.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
-				<li><a href="/#gimnasio">Caso gimnasio</a></li>
-			</ul>
-		</nav>
-
-		<nav aria-label="Plataforma" class="footer-col">
-			<h2>Plataforma</h2>
-			<ul role="list">
-				<li><a href={APP_URL} data-cta="app-footer">Entrar a NEXUS</a></li>
+				<li><a href="/#faq">Preguntas frecuentes</a></li>
 				<li><a href="/help">Centro de ayuda</a></li>
-				<li><a href={whatsappLink('Hola NEXUS THRIVE, quiero conocer la plataforma.')} target="_blank" rel="noopener" data-cta="whatsapp-footer">WhatsApp</a></li>
 			</ul>
 		</nav>
 
-		<nav aria-label="Redes sociales" class="footer-col">
-			<h2>Redes</h2>
+		<nav aria-label="Servicios" class="footer-col">
+			<h2>Servicios</h2>
 			<ul role="list">
+				{CAPABILITIES.map((c) => <li><a href="/#servicios">{c.title}</a></li>)}
+			</ul>
+		</nav>
+
+		<nav aria-label="Contacto y redes" class="footer-col">
+			<h2>Contacto</h2>
+			<ul role="list">
+				<li><a href={whatsappLink('Hola NEXUS THRIVE, quiero hablar de mi proyecto.')} target="_blank" rel="noopener" data-cta="whatsapp-footer">WhatsApp</a></li>
 				{SOCIALS.map((s) => <li><a href={s.href} target="_blank" rel="noopener">{s.label}</a></li>)}
+				<li><a href={APP_URL} data-cta="app-footer">Entrar a la app NEXUS</a></li>
 			</ul>
 		</nav>
 	</div>
 
 	<div class="container"><div class="footer-legal">
-		<p>© {year} NEXUS THRIVE</p>
+		<p>© {year} NEXUS THRIVE · Turbaco, Bolívar, Colombia</p>
 		<ul role="list">
 			<li><a href="/privacidad">Privacidad</a></li>
 			<li><a href="/terminos">Términos</a></li>
@@ -51,32 +61,73 @@ const year = new Date().getFullYear();
 
 <style>
 	.footer {
+		position: relative;
+		isolation: isolate;
+		overflow: clip;
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+		min-height: 100svh;
 		padding-top: clamp(3.5rem, 7vw, 5rem);
-		border-top: 1px solid var(--border);
 		background: var(--background);
+	}
+
+	.footer-bg {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+	}
+
+	.footer-bg :global(.ghost-fibers) {
+		position: absolute;
+		inset: 0;
+	}
+
+	/* Fundido arriba (con la página) y velo abajo para que los enlaces se lean. */
+	.footer-fade {
+		position: absolute;
+		inset: 0;
+		background:
+			linear-gradient(to bottom, var(--background), transparent 30%),
+			linear-gradient(to top, color-mix(in srgb, var(--background) 85%, transparent), transparent 55%);
+		pointer-events: none;
 	}
 
 	.footer-grid {
 		display: grid;
-		grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+		margin-block: auto;
+		grid-template-columns: minmax(0, 2.2fr) repeat(3, minmax(0, 1fr));
 		gap: 2.5rem;
+		align-items: start;
 	}
 
+	/* Logo, texto y botón centrados entre sí. */
 	.footer-brand {
 		display: grid;
 		gap: 1.2rem;
 		align-content: start;
-		max-width: 340px;
+		justify-items: center;
+		text-align: center;
 	}
 
-	.footer-logo {
-		color: var(--foreground);
-		width: fit-content;
+	.footer-logo-dots {
+		width: min(100%, 300px);
+		position: relative;
+		margin-inline: auto;
 	}
 
-	.footer-brand p {
+	.footer-tag span {
+		display: block;
+	}
+
+	.footer-tag {
+		max-width: 36ch;
 		font-size: 0.92rem;
 		color: var(--foreground-muted);
+	}
+
+	.footer-cta {
+		width: fit-content;
 	}
 
 	.footer-col h2 {
@@ -128,13 +179,23 @@ const year = new Date().getFullYear();
 		font-size: 0.85rem;
 	}
 
-	@media (max-width: 799px) {
+	@media (max-width: 999px) {
 		.footer-grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 
 		.footer-brand {
 			grid-column: 1 / -1;
+		}
+	}
+
+	@media (max-width: 479px) {
+		.footer-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.footer-logo-dots {
+			width: 100%;
 		}
 	}
 </style>
