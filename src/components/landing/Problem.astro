@@ -1,0 +1,160 @@
+---
+import SectionBackground from '../react/SectionBackground';
+import { PROBLEM } from '../../data/landing';
+import { PAIN_ICONS } from './icons';
+---
+
+<section class="full problem" id="problemas" aria-labelledby="problem-title" data-problem>
+	<div class="full-bg" aria-hidden="true"><SectionBackground client:load kind="dispersion" /></div>
+	<div class="container">
+		<header class="problem-head" data-head>
+			<h2 id="problem-title" class="title-lg">{PROBLEM.title}</h2>
+		</header>
+
+		<ol class="pains" role="list">
+			{PROBLEM.pains.map((p, i) => (
+				<li class="pain" data-pain style={`--i:${i}`}>
+					<div class="pain-card widget glass-lg">
+						<div class="pain-top">
+							{(() => { const Icon = PAIN_ICONS[i]; return <span class="icon-tile pain-ico"><Icon size={22} stroke-width={1.7} aria-hidden="true" /></span>; })()}
+							<span class="pain-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+						</div>
+						<h3 class="title-md">{p.title}</h3>
+					</div>
+				</li>
+			))}
+		</ol>
+	</div>
+</section>
+
+<style>
+	.problem-head {
+		display: grid;
+		justify-items: center;
+		max-width: 720px;
+		margin: 0 auto clamp(1.6rem, 5vh, 3.6rem);
+		text-align: center;
+	}
+
+	.problem-head .title-lg {
+		text-wrap: balance;
+	}
+
+	/* Seis situaciones en un tablero: llegan desordenadas y se acomodan al hacer scroll (ver motion.ts). */
+	.pains {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1rem;
+		list-style: none;
+	}
+
+	.pain-card {
+		position: relative;
+		display: grid;
+		gap: 1.4rem;
+		align-content: space-between;
+		min-height: clamp(150px, 25vh, 250px);
+		height: 100%;
+		padding: clamp(1.1rem, 2.2vw, 1.5rem);
+		box-shadow: var(--nx-shadow-sm);
+		transition: border-color var(--d3) var(--ease), transform var(--d3) var(--nx-ease-out);
+	}
+
+	/* Brillo dorado en la esquina al pasar el cursor. */
+	.pain-card::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		background: radial-gradient(60% 90% at 100% 0%, rgba(212, 175, 55, 0.2), transparent);
+		opacity: 0;
+		transition: opacity var(--d3) var(--ease);
+		pointer-events: none;
+	}
+
+	.pain-card:hover {
+		border-color: var(--border-strong);
+		transform: translateY(-4px);
+	}
+
+	.pain-card:hover::after {
+		opacity: 1;
+	}
+
+	.pain-top {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.pain-ico {
+		animation: pain-float 5s ease-in-out infinite;
+		animation-delay: calc(var(--i) * -0.8s);
+	}
+
+	@keyframes pain-float {
+		50% { transform: translateY(-5px) rotate(-4deg); }
+	}
+
+	/* Numeral grande de contorno: se lee como parte del diseño, no como una etiqueta. */
+	.pain-n {
+		font-family: var(--font-display);
+		font-size: clamp(2.2rem, 3.4vw, 3rem);
+		font-weight: 800;
+		line-height: 0.9;
+		letter-spacing: -0.05em;
+		font-variant-numeric: tabular-nums;
+		color: transparent;
+		-webkit-text-stroke: 1px var(--border-strong);
+		transform-origin: 100% 0;
+		transition: transform 480ms var(--nx-ease-spring), -webkit-text-stroke-color var(--d3) var(--ease), color var(--d3) var(--ease), text-shadow var(--d3) var(--ease);
+	}
+
+	/* Al pasar el cursor, el número crece y se sale por la esquina superior derecha de la tarjeta. */
+	@media (hover: hover) {
+		.pain:hover {
+			position: relative;
+			z-index: 2;
+		}
+
+		.pain:hover .pain-n {
+			transform: translate(2.4rem, -2.9rem) scale(1.75) rotate(6deg);
+			-webkit-text-stroke-color: var(--nx-gold-300);
+			color: var(--accent);
+			text-shadow: 0 10px 26px rgba(0, 0, 0, 0.65), 0 0 30px rgba(212, 175, 55, 0.4);
+		}
+	}
+
+	.pain-card h3 {
+		font-size: clamp(1.02rem, 1.6vw, 1.2rem);
+		line-height: 1.3;
+	}
+
+	@media (max-width: 1023px) {
+		.pains {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 599px) {
+		.pains {
+			grid-template-columns: 1fr;
+		}
+
+		.pain-card {
+			min-height: 0;
+			gap: 1rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.pain-ico {
+			animation: none;
+		}
+
+		.pain-n {
+			transition: none;
+		}
+	}
+</style>

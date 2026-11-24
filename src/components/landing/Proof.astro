@@ -1,0 +1,182 @@
+---
+import SectionBackground from '../react/SectionBackground';
+import type { ImageMetadata } from 'astro';
+import { PROOF } from '../../data/landing';
+import { APP_URL } from '../../data/site';
+import { ArrowUpRight } from '@lucide/astro';
+
+// Captura real del dashboard de NEXUS (tema oscuro). Se corta en 3 × 2 piezas que, al hacer scroll,
+// llegan sueltas y se arman hasta formar la pantalla completa.
+const files = import.meta.glob<{ default: ImageMetadata }>('../../assets/product/inicio-dark.webp', { eager: true });
+const shot = Object.values(files)[0].default;
+const COLS = 3, ROWS = 2;
+const tiles = Array.from({ length: COLS * ROWS }, (_, i) => ({
+	col: i % COLS,
+	row: Math.floor(i / COLS),
+}));
+---
+
+<section class="full proof" id="trabajo" aria-labelledby="proof-title">
+	<div class="full-bg full-bg--top" aria-hidden="true"><SectionBackground client:load kind="lluvia" /></div>
+	<div class="container proof-head" data-head>
+		<h2 id="proof-title" class="title-lg">{PROOF.title}</h2>
+		<p class="lead">{PROOF.text}</p>
+	</div>
+
+	<figure class="proof-shot" data-assemble>
+		<div class="as-stage" data-stage>
+			<div class="as-glow" aria-hidden="true"></div>
+			<div
+				class="as-frame"
+				role="img"
+				aria-label="Inicio de NEXUS: resumen con ventas del mes, vencido, clientes, balance y gráficos de ventas e ingresos y gastos."
+				style={`aspect-ratio:${shot.width} / ${shot.height}`}
+			>
+				{tiles.map((t) => (
+					<div
+						class="as-tile"
+						data-tile
+						style={`background-image:url(${shot.src});background-size:${COLS * 100}% ${ROWS * 100}%;background-position:${(t.col / (COLS - 1)) * 100}% ${(t.row / (ROWS - 1)) * 100}%;grid-column:${t.col + 1};grid-row:${t.row + 1}`}
+					></div>
+				))}
+			</div>
+		</div>
+		<div class="as-fade" aria-hidden="true"></div>
+
+		<div class="proof-over">
+			<a href={APP_URL} class="btn btn--primary" target="_blank" rel="noopener" data-cta="app-prueba">
+				{PROOF.cta}
+				<ArrowUpRight size={18} stroke-width={2} aria-hidden="true" />
+			</a>
+			<figcaption>{PROOF.note}</figcaption>
+		</div>
+	</figure>
+</section>
+
+<style>
+	/* La imagen es la protagonista: ancha, en el centro, y se funde con el negro de abajo como en una presentación de producto. */
+	.proof {
+		padding-bottom: 0;
+		overflow: clip;
+	}
+
+	.proof-head {
+		display: grid;
+		justify-items: center;
+		gap: 1.1rem;
+		max-width: 860px;
+		text-align: center;
+	}
+
+	.proof-head .title-lg {
+		font-size: clamp(1.7rem, 3.4vw, 2.7rem);
+		text-wrap: balance;
+	}
+
+	.proof-head .lead {
+		max-width: 62ch;
+	}
+
+	.proof-shot {
+		position: relative;
+		display: grid;
+		justify-items: center;
+		flex: 1;
+		align-content: start;
+		margin-top: clamp(1.4rem, 4vh, 2.8rem);
+		padding-inline: var(--gutter);
+		perspective: 1800px;
+	}
+
+	.as-stage {
+		position: relative;
+		width: min(1280px, 100%);
+		transform-origin: 50% 100%;
+	}
+
+	/* Halo dorado detrás de la pantalla. */
+	.as-glow {
+		position: absolute;
+		inset: -8% -6% 10%;
+		z-index: 0;
+		background: radial-gradient(closest-side, rgba(226, 232, 240, 0.2), transparent 72%);
+		filter: blur(30px);
+		pointer-events: none;
+	}
+
+	.as-frame {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-rows: repeat(2, 1fr);
+		width: 100%;
+		border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+		box-shadow: 0 -2px 0 rgba(255, 255, 255, 0.06), 0 40px 100px -30px rgba(0, 0, 0, 0.9);
+	}
+
+	.as-tile {
+		background-repeat: no-repeat;
+		/* Un píxel de solape evita las costuras entre piezas al redondear. */
+		margin: -0.5px;
+		will-change: transform;
+	}
+
+	.as-tile[style*='grid-column:1'][style*='grid-row:1'] { border-top-left-radius: var(--radius-sheet); }
+	.as-tile[style*='grid-column:3'][style*='grid-row:1'] { border-top-right-radius: var(--radius-sheet); }
+
+	/* Difuminado negro inferior: la pantalla se pierde en el fondo. */
+	.as-fade {
+		position: absolute;
+		inset: auto 0 -2px;
+		z-index: 2;
+		height: 55%;
+		background: linear-gradient(to top, var(--nx-ink) 14%, rgba(0, 0, 0, 0.82) 42%, transparent);
+		pointer-events: none;
+	}
+
+	.proof-over {
+		position: absolute;
+		inset: auto 0 0;
+		z-index: 3;
+		display: grid;
+		justify-items: center;
+		gap: 0.7rem;
+		padding-bottom: clamp(1.6rem, 5vh, 3rem);
+	}
+
+	/* La captura llena el resto de la ventana y se recorta abajo. */
+	@media (min-width: 900px) {
+		.proof {
+			height: 100svh;
+			min-height: 600px;
+		}
+
+		.proof-shot {
+			min-height: 0;
+		}
+
+		.as-stage {
+			width: min(1160px, 100%);
+		}
+	}
+
+	@media (max-width: 899px) {
+		.as-stage {
+			width: 170%;
+		}
+
+		.proof-shot {
+			justify-items: start;
+		}
+
+		.proof-over {
+			padding-bottom: 6rem;
+		}
+	}
+
+	.proof-over figcaption {
+		font-size: 0.82rem;
+		color: var(--foreground-muted);
+	}
+</style>

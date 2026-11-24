@@ -10,8 +10,8 @@ interface Props {
 const { title, description } = Astro.props;
 
 const DEFAULT_DESCRIPTION =
-	'NEXUS es el sistema operativo para tu negocio: clientes, membresías, pagos, caja y control de acceso conectados en una sola plataforma.';
-const HOME_TITLE = 'NEXUS THRIVE — Sistema operativo para tu negocio';
+	'Software, automatización e inteligencia artificial para empresas. Conectamos tus procesos y simplificamos tu operación. Desde Cartagena y Turbaco, Colombia.';
+const HOME_TITLE = 'NexusThrive | Soluciones digitales para empresas';
 const isHome = title === 'Inicio';
 const fullTitle = isHome ? HOME_TITLE : `${title} | ${SITE_NAME}`;
 const pageDescription = description ?? DEFAULT_DESCRIPTION;
@@ -21,27 +21,27 @@ const OG_IMAGE = new URL('/og-image.webp', SITE_URL);
 ---
 
 <!doctype html>
-<html lang="es" data-theme="light">
+<html lang="es" data-theme="dark">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		{/*
-			Tema antes del primer paint (sin parpadeo): la elección guardada o,
-			si no hay, la del sistema operativo. `js` habilita los revelados;
-			sin JavaScript todo el contenido queda visible.
+			El sitio es siempre oscuro (se fija antes del primer paint, sin parpadeo). `js` marca que hay
+			JavaScript; sin él todo el contenido queda visible.
 		*/}
 		<script is:inline>
 			(function () {
 				var d = document.documentElement;
 				d.classList.add('js');
-				var t = null;
-				try { t = localStorage.getItem('nexus-theme'); } catch (e) {}
-				if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-				d.dataset.theme = t;
+				/* Pantalla de carga: una vez por sesión y solo con movimiento permitido. */
+				try {
+					if (!matchMedia('(prefers-reduced-motion: reduce)').matches && location.pathname === '/') d.classList.add('preloading');
+				} catch (e) {}
+				/* Modo oscuro fijo: no hay selector de tema. */
+				d.dataset.theme = 'dark';
 			})();
 		</script>
-		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f6f3" />
-		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0b" />
+		<meta name="theme-color" content="#0a0a0b" />
 		<title>{fullTitle}</title>
 		<meta name="description" content={pageDescription} />
 		<link rel="canonical" href={CANONICAL} />
@@ -53,6 +53,7 @@ const OG_IMAGE = new URL('/og-image.webp', SITE_URL);
 		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/site.webmanifest" />
 		<meta name="generator" content={Astro.generator} />
+		<meta name="keywords" content="desarrollo de software Cartagena, software a medida, automatización de procesos, integración de herramientas, inteligencia artificial para empresas, paneles de control" />
 
 		<link rel="preload" href="/fonts/Montserrat-latin.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="/fonts/Inter-latin.woff2" as="font" type="font/woff2" crossorigin />
@@ -68,7 +69,7 @@ const OG_IMAGE = new URL('/og-image.webp', SITE_URL);
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
 		<meta property="og:image:type" content="image/webp" />
-		<meta property="og:image:alt" content="NEXUS THRIVE — Sistema operativo para tu negocio." />
+		<meta property="og:image:alt" content="NexusThrive: soluciones digitales para empresas." />
 
 		<!-- Twitter / X -->
 		<meta name="twitter:card" content="summary_large_image" />
@@ -82,7 +83,10 @@ const OG_IMAGE = new URL('/og-image.webp', SITE_URL);
 			'@context': 'https://schema.org',
 			'@type': 'Organization',
 			name: SITE_NAME,
+			description: 'Equipo de software, automatización e inteligencia artificial que desarrolla soluciones digitales para empresas de Bolívar y Colombia.',
 			url: SITE_URL,
+			areaServed: ['Cartagena', 'Turbaco', 'Bolívar', 'Colombia'],
+			address: { '@type': 'PostalAddress', addressLocality: 'Turbaco', addressRegion: 'Bolívar', addressCountry: 'CO' },
 			logo: new URL('/icon-512.png', SITE_URL).toString(),
 			sameAs: SOCIALS.map((s) => s.href),
 			contactPoint: {
@@ -108,63 +112,134 @@ const OG_IMAGE = new URL('/og-image.webp', SITE_URL);
 	</head>
 	<body>
 		<a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+		{/* Pantalla de carga: solo se muestra con la clase `preloading` (la pone el <head>). */}
+		<div class="preloader" data-preloader role="status" aria-label="Cargando NexusThrive">
+			<div class="pl-panel pl-panel--top"></div>
+			<div class="pl-panel pl-panel--bottom"></div>
+			<canvas class="pl-grid" data-pl-grid aria-hidden="true"></canvas>
+			<div class="pl-stage">
+				<div class="pl-logo">
+					<canvas class="pl-dots" data-pl-dots aria-hidden="true"></canvas>
+					<div class="pl-svg" data-pl-svg></div>
+				</div>
+			</div>
+			<button type="button" class="pl-skip" data-pl-skip>Saltar</button>
+		</div>
+		<div class="scroll-progress" aria-hidden="true"><i data-scroll-progress></i></div>
+
 		<slot />
 
 		<a
-			href={whatsappLink('Hola NEXUS THRIVE, quiero conocer la plataforma.')}
+			href={whatsappLink('Hola NEXUS THRIVE, quiero hablar de mi proyecto.')}
 			class="wa-float"
 			target="_blank"
 			rel="noopener"
 			aria-label="Escríbenos por WhatsApp"
 			data-cta="whatsapp-flotante"
 		>
-			<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"></path></svg>
+			<span class="wa-label" aria-hidden="true">Escríbenos</span>
+			<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"></path></svg>
 		</a>
 
 		<script>
-			// Revelado progresivo: marca `.is-in` cuando el bloque entra en pantalla.
-			const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
-			if (!('IntersectionObserver' in window)) {
-				items.forEach((el) => el.classList.add('is-in'));
-			} else {
-				const io = new IntersectionObserver(
-					(entries) => {
-						for (const entry of entries) {
-							if (entry.isIntersecting) {
-								entry.target.classList.add('is-in');
-								io.unobserve(entry.target);
-							}
-						}
-					},
-					{ rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
-				);
-				items.forEach((el) => io.observe(el));
-			}
+			import '../scripts/preloader';
+			import '../scripts/motion';
+			import '../scripts/system-scene';
+			import '../scripts/caps-scene';
+			import '../scripts/widgets';
+			import '../scripts/assemble';
 		</script>
 
+
 		<style is:global>
-			/* Botón de WhatsApp con la forma de la marca: bloque Ink, esquinas casi rectas, sin brillo. */
+			/* Botón de WhatsApp: gota de vidrio líquido dorado que se estira y muestra su texto al acercarse. */
 			.wa-float {
 				position: fixed;
 				right: 1rem;
 				bottom: 1rem;
 				z-index: 90;
-				display: grid;
-				place-items: center;
-				width: 50px;
-				height: 50px;
-				border-radius: var(--radius-lg);
-				background: var(--primary);
-				color: var(--primary-foreground);
-				border: 1px solid var(--border-strong);
-				transition: transform var(--d2) var(--nx-ease-out), background-color var(--d2) var(--ease);
+				isolation: isolate;
+				display: inline-flex;
+				align-items: center;
+				justify-content: flex-end;
+				height: 56px;
+				padding: 0 14px;
+				border: 1px solid rgba(255, 238, 180, 0.6);
+				border-radius: 999px;
+				background:
+					radial-gradient(80% 70% at 25% 0%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 60%),
+					linear-gradient(150deg, rgba(255, 229, 140, 0.92), rgba(226, 190, 70, 0.8) 50%, rgba(205, 165, 42, 0.86));
+				-webkit-backdrop-filter: blur(16px) saturate(190%);
+				backdrop-filter: blur(16px) saturate(190%);
+				box-shadow:
+					inset 0 1px 1px rgba(255, 255, 255, 0.8),
+					inset 0 -6px 12px rgba(127, 98, 16, 0.45),
+					inset 0 0 14px rgba(255, 245, 205, 0.4),
+					0 14px 34px -10px rgba(212, 175, 55, 0.6),
+					0 8px 20px -8px rgba(0, 0, 0, 0.7);
+				color: var(--nx-ink);
+				transition: transform var(--d3) var(--nx-ease-out), box-shadow var(--d3) var(--ease);
+			}
+			.wa-float svg {
+				flex: none;
+				transition: transform var(--d3) var(--nx-ease-spring);
+			}
+			/* Destello que cruza el vidrio. */
+			.wa-float::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				z-index: -1;
+				border-radius: inherit;
+				background: linear-gradient(110deg, transparent 38%, rgba(255, 255, 255, 0.75) 50%, transparent 62%) no-repeat 160% 0 / 250% 100%;
+				animation: wa-sheen 6s var(--ease) infinite;
+			}
+			/* Onda que respira alrededor. */
+			.wa-float::after {
+				content: '';
+				position: absolute;
+				inset: -1px;
+				z-index: -2;
+				border: 1px solid rgba(230, 203, 116, 0.8);
+				border-radius: inherit;
+				animation: wa-ring 3s var(--nx-ease-out) infinite;
+				pointer-events: none;
+			}
+			.wa-label {
+				max-width: 0;
+				overflow: hidden;
+				white-space: nowrap;
+				font: 700 0.92rem/1.4 var(--font-sans);
+				opacity: 0;
+				transition: max-width 420ms var(--nx-ease-out), margin 420ms var(--nx-ease-out), opacity var(--d2) var(--ease);
 			}
 			.wa-float:hover {
-				color: var(--primary-foreground);
-				transform: translateY(-2px);
+				color: var(--nx-ink);
+				transform: translateY(-3px);
+			}
+			.wa-float:hover svg {
+				transform: rotate(-10deg) scale(1.1);
+			}
+			.wa-float:hover .wa-label,
+			.wa-float:focus-visible .wa-label {
+				max-width: 7rem;
+				margin: 0 0.6rem 0 0.4rem;
+				opacity: 1;
+			}
+			.wa-float:focus-visible {
+				border-radius: 999px;
+			}
+			@keyframes wa-sheen {
+				0%, 60% { background-position: 160% 0; }
+				85%, 100% { background-position: -60% 0; }
+			}
+			@keyframes wa-ring {
+				from { opacity: 0.8; transform: scale(1); }
+				70%, to { opacity: 0; transform: scale(1.4); }
 			}
 			@media (min-width: 900px) {
-				.wa-float { right: 1.5rem; bottom: 1.5rem; width: 54px; height: 54px; }
+				.wa-float { right: 1.5rem; bottom: 1.5rem; height: 60px; padding: 0 16px; }
 			}
 		</style>
 	</body>

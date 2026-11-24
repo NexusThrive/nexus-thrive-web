@@ -1,0 +1,519 @@
+---
+import SectionBackground from '../react/SectionBackground';
+import { PROCESS, PROCESS_SECTION, CTA } from '../../data/landing';
+---
+
+<section class="full process" id="nosotros" aria-labelledby="process-title" data-process-pin>
+	<div class="full-bg" aria-hidden="true"><SectionBackground client:load kind="fibras" /></div>
+	<div class="container">
+		<header class="process-head" data-head>
+			<h2 id="process-title" class="title-lg">{PROCESS_SECTION.title}</h2>
+			<p class="lead">{PROCESS_SECTION.lead}</p>
+		</header>
+
+		<div class="steps" data-process>
+			<div class="track" aria-hidden="true"><i data-track-fill></i></div>
+			<ol class="step-list" role="list">
+				{PROCESS.map((s, i) => (
+					<li class="step" data-step>
+						<span class="step-node" data-pnode>{s.n}</span>
+						<div class="step-card glass-lg">
+							<div class="pv" aria-hidden="true" data-w={`p${i + 1}`}>
+								{i === 0 && (
+									<div class="chat">
+										<div class="bub bub--l" data-m><s style="--w:78%"></s><s style="--w:52%"></s></div>
+										<div class="bub bub--r" data-m><s style="--w:70%"></s><s style="--w:42%"></s></div>
+										<div class="bub bub--l" data-m><s style="--w:60%"></s></div>
+										<div class="typing" data-typing><i></i><i></i><i></i></div>
+									</div>
+								)}
+								{i === 1 && (
+									<svg class="bp" viewBox="0 0 240 150">
+										<rect data-d pathLength="1" x="8" y="8" width="224" height="22" rx="7"></rect>
+										<rect data-d pathLength="1" x="8" y="38" width="58" height="104" rx="8"></rect>
+										<rect data-d pathLength="1" x="74" y="38" width="72" height="48" rx="8"></rect>
+										<rect data-d pathLength="1" x="154" y="38" width="78" height="48" rx="8"></rect>
+										<rect data-d pathLength="1" x="74" y="94" width="158" height="48" rx="8"></rect>
+										<rect class="bp-sel" data-sel x="74" y="38" width="72" height="48" rx="8"></rect>
+										{[[40, 52, '1'], [188, 52, '2'], [172, 118, '3']].map(([x, y, n]) => (
+											<g class="bp-tag" data-tag transform={`translate(${x} ${y})`}><circle r="9"></circle><text y="3.6" text-anchor="middle">{n}</text></g>
+										))}
+									</svg>
+								)}
+								{i === 2 && (
+									<div class="build">
+										<div class="build-top"><div class="bar"><i data-fill></i></div><span class="pct"><em data-pct>0</em>%</span></div>
+										<div class="blocks">{[0, 1, 2, 3, 4, 5].map(() => <b data-blk></b>)}</div>
+										<ul class="ticks" role="list">{['Primera versión', 'Revisión contigo', 'Ajustes'].map((t) => <li data-tk><span></span>{t}</li>)}</ul>
+									</div>
+								)}
+								{i === 3 && (
+									<div class="live">
+										<span class="pill" data-pill><i></i>En funcionamiento</span>
+										<div class="spark">{[34, 48, 40, 62, 56, 78, 92].map((h) => <s data-bar style={`--h:${h}%`}></s>)}</div>
+										<div class="live-auri" data-auri><span class="live-bubble" data-b4>Aquí seguimos</span><span class="live-ball"><i></i><i></i></span></div>
+									</div>
+								)}
+							</div>
+							<h3 class="title-md">{s.title}</h3>
+							<p>{s.text}</p>
+						</div>
+					</li>
+				))}
+			</ol>
+		</div>
+
+		<div class="process-cta">
+			<a href="#diagnostico" class="btn btn--primary" data-cta="proceso-diagnostico">
+				{CTA.primary}
+				<svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+			</a>
+		</div>
+	</div>
+</section>
+
+<style>
+	.process-head {
+		display: grid;
+		justify-items: center;
+		gap: 1.1rem;
+		max-width: 780px;
+		margin-inline: auto;
+		text-align: center;
+	}
+
+	.steps {
+		position: relative;
+		margin-top: clamp(1.4rem, 4vh, 3rem);
+	}
+
+	/* La línea que une los pasos se llena al hacer scroll (no se queda fija: solo se dibuja). */
+	.track {
+		position: absolute;
+		top: 22px;
+		left: 12.5%;
+		right: 12.5%;
+		height: 2px;
+		border-radius: 999px;
+		background: var(--border);
+		overflow: hidden;
+	}
+
+	.track i {
+		display: block;
+		height: 100%;
+		background: linear-gradient(90deg, var(--accent), var(--nx-gold-300));
+		transform: scaleX(var(--p, 0));
+		transform-origin: left;
+	}
+
+	/* Un destello recorre la línea sin parar. */
+	.track::after {
+		content: '';
+		position: absolute;
+		top: -2px;
+		left: 0;
+		width: 60px;
+		height: 6px;
+		border-radius: 999px;
+		background: radial-gradient(closest-side, rgba(246, 235, 196, 0.95), transparent);
+		animation: track-run 3.6s var(--ease) infinite;
+	}
+
+	@keyframes track-run {
+		from { transform: translateX(-60px); }
+		to { transform: translateX(calc(100cqw)); }
+	}
+
+	.track { container-type: inline-size; }
+
+	.step-list {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 1rem;
+		list-style: none;
+	}
+
+	.step {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.step-node {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		place-items: center;
+		width: 46px;
+		height: 46px;
+		border: 2px solid var(--border-strong);
+		border-radius: 50%;
+		background: var(--nx-ink);
+		font-family: var(--font-mono);
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--foreground-muted);
+		transition: background-color var(--d3) var(--ease), border-color var(--d3) var(--ease), color var(--d3) var(--ease), box-shadow var(--d3) var(--ease);
+	}
+
+	.step-node.is-on {
+		background: var(--accent);
+		border-color: var(--accent);
+		color: var(--nx-ink);
+		box-shadow: 0 0 0 6px rgba(212, 175, 55, 0.18);
+	}
+
+	.step-card {
+		flex: 1;
+		display: grid;
+		gap: 0.7rem;
+		align-content: start;
+		width: 100%;
+		padding: 1rem 1rem 1.3rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-widget);
+		background: var(--surface);
+		box-shadow: var(--nx-shadow-xs);
+		transition: border-color var(--d3) var(--ease), transform var(--d3) var(--nx-ease-out);
+	}
+
+	.step-card:hover {
+		border-color: var(--border-strong);
+		transform: translateY(-4px);
+	}
+
+	.step-card h3,
+	.step-card p {
+		padding-inline: 0.3rem;
+	}
+
+	.step-card p {
+		font-size: 0.92rem;
+		color: var(--foreground-muted);
+	}
+
+	.process-cta {
+		display: flex;
+		justify-content: center;
+		margin-top: clamp(1.2rem, 3.5vh, 2.4rem);
+	}
+
+	/* ---------- ilustraciones animadas ---------- */
+	.pv {
+		position: relative;
+		height: clamp(150px, 23vh, 220px);
+		padding: 0.7rem;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-lg);
+		background:
+			radial-gradient(90% 80% at 50% 0%, rgba(212, 175, 55, 0.07), transparent 70%),
+			var(--surface-muted);
+		overflow: hidden;
+	}
+
+	/* 1 · conversación */
+	.chat {
+		display: grid;
+		gap: 0.4rem;
+		align-content: center;
+		height: 100%;
+	}
+
+	.bub {
+		display: grid;
+		gap: 0.3rem;
+		width: 74%;
+		padding: 0.5rem 0.65rem;
+		border: 1px solid var(--border);
+		border-radius: 14px 14px 14px 4px;
+		background: var(--surface);
+	}
+
+	.bub--r {
+		justify-self: end;
+		border-radius: 14px 14px 4px 14px;
+		border-color: rgba(212, 175, 55, 0.4);
+		background: var(--accent-subtle);
+	}
+
+	.bub s {
+		display: block;
+		height: 6px;
+		width: var(--w);
+		border-radius: 999px;
+		background: var(--border-strong);
+		text-decoration: none;
+	}
+
+	.bub--r s {
+		background: var(--accent);
+	}
+
+	.typing {
+		display: flex;
+		gap: 4px;
+		width: fit-content;
+		padding: 0.45rem 0.6rem;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		background: var(--surface);
+	}
+
+	.typing i {
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
+		background: var(--foreground-muted);
+	}
+
+	/* 2 · plano */
+	.bp {
+		width: 100%;
+		height: 100%;
+	}
+
+	.bp rect {
+		fill: none;
+		stroke: var(--border-strong);
+		stroke-width: 1.6;
+	}
+
+	.bp rect.bp-sel {
+		fill: rgba(212, 175, 55, 0.14);
+		stroke: var(--accent);
+		stroke-dasharray: 5 4;
+	}
+
+	.bp-tag circle {
+		fill: var(--accent);
+	}
+
+	.bp-tag text {
+		font-family: var(--font-mono);
+		font-size: 10px;
+		font-weight: 700;
+		fill: var(--nx-ink);
+	}
+
+	/* 3 · construcción */
+	.build {
+		display: grid;
+		gap: 0.6rem;
+		align-content: center;
+		height: 100%;
+	}
+
+	.build-top {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+	}
+
+	.bar {
+		flex: 1;
+		height: 8px;
+		border-radius: 999px;
+		background: var(--border);
+		overflow: hidden;
+	}
+
+	.bar i {
+		display: block;
+		height: 100%;
+		border-radius: inherit;
+		background: var(--accent);
+		transform-origin: left;
+	}
+
+	.pct {
+		min-width: 3.2ch;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		font-weight: 600;
+		text-align: right;
+	}
+
+	.pct em {
+		font-style: normal;
+	}
+
+	.blocks {
+		display: grid;
+		grid-template-columns: repeat(6, 1fr);
+		gap: 0.3rem;
+	}
+
+	.blocks b {
+		height: 26px;
+		border: 1px solid rgba(212, 175, 55, 0.4);
+		border-radius: 7px;
+		background: var(--accent-subtle);
+	}
+
+	.ticks {
+		display: grid;
+		gap: 0.3rem;
+		list-style: none;
+		font-size: 0.72rem;
+	}
+
+	.ticks li {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		color: var(--foreground-muted);
+	}
+
+	.ticks li span {
+		position: relative;
+		width: 14px;
+		height: 14px;
+		border: 1.5px solid var(--border-strong);
+		border-radius: 50%;
+		transition: background-color var(--d2) var(--ease), border-color var(--d2) var(--ease);
+	}
+
+	.ticks li.is-done {
+		color: var(--foreground);
+	}
+
+	.ticks li.is-done span {
+		background: var(--accent);
+		border-color: var(--accent);
+	}
+
+	/* 4 · en funcionamiento */
+	.live {
+		position: relative;
+		display: grid;
+		gap: 0.5rem;
+		align-content: space-between;
+		height: 100%;
+	}
+
+	.pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		width: fit-content;
+		padding: 0.25rem 0.7rem;
+		border: 1px solid rgba(212, 175, 55, 0.4);
+		border-radius: 999px;
+		background: var(--accent-subtle);
+		font-size: 0.7rem;
+		font-weight: 600;
+	}
+
+	.pill i {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--accent);
+		animation: live-pulse 1.6s var(--ease) infinite;
+	}
+
+	@keyframes live-pulse {
+		0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6); }
+		60% { box-shadow: 0 0 0 7px rgba(212, 175, 55, 0); }
+	}
+
+	.spark {
+		display: flex;
+		align-items: flex-end;
+		gap: 0.35rem;
+		height: 64px;
+		padding-right: 3rem;
+	}
+
+	.spark s {
+		flex: 1;
+		height: var(--h);
+		border-radius: 6px 6px 2px 2px;
+		background: linear-gradient(to top, rgba(212, 175, 55, 0.25), var(--accent));
+		transform-origin: bottom;
+		text-decoration: none;
+	}
+
+	.live-auri {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		align-items: flex-end;
+		gap: 0.35rem;
+	}
+
+	.live-bubble {
+		padding: 0.22rem 0.6rem;
+		border: 1px solid rgba(212, 175, 55, 0.4);
+		border-radius: 12px 12px 4px 12px;
+		background: var(--accent-subtle);
+		font-size: 0.64rem;
+		font-weight: 600;
+		white-space: nowrap;
+	}
+
+	.live-ball {
+		position: relative;
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		background: var(--nx-ink);
+		border: 1px solid rgba(212, 175, 55, 0.55);
+		box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12), 0 0 14px rgba(212, 175, 55, 0.3);
+	}
+
+	.live-ball i {
+		position: absolute;
+		top: 41%;
+		width: 11%;
+		height: 18%;
+		border-radius: 999px;
+		background: var(--nx-gold-300);
+	}
+
+	.live-ball i:first-child { left: 35%; }
+	.live-ball i:last-child { left: 54%; }
+
+	/* En pantallas angostas: los pasos se apilan y la línea baja por la izquierda. */
+	@media (max-width: 1023px) {
+		.step-list {
+			grid-template-columns: 1fr;
+			gap: 1.2rem;
+			padding-left: 0;
+		}
+
+		.track {
+			top: 22px;
+			bottom: 22px;
+			left: 22px;
+			right: auto;
+			width: 2px;
+			height: auto;
+		}
+
+		.track i {
+			height: 100%;
+			transform: scaleY(var(--p, 0));
+			transform-origin: top;
+		}
+
+		.track::after {
+			display: none;
+		}
+
+		.step {
+			display: grid;
+			grid-template-columns: 46px minmax(0, 1fr);
+			align-items: start;
+			column-gap: 0.9rem;
+		}
+
+		.step-node {
+			margin-top: 0;
+		}
+	}
+</style>

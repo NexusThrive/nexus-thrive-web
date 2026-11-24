@@ -1,0 +1,243 @@
+---
+import SectionBackground from '../react/SectionBackground';
+// Divisor entre el contacto y el pie: una frase de cierre y una cinta con lo que hacemos, pegada al pie.
+const WORDS = ['Software a medida', 'Automatización', 'Inteligencia artificial aplicada', 'Datos y control', 'Atención directa', 'Entregas por etapas'];
+// Siete hilos que se cruzan y terminan en el mismo punto; y los cinco puntos parejos donde se abre.
+const TANGLE = [
+	'M30,0 C60,70 500,36 320,150',
+	'M120,0 C180,90 420,20 320,150',
+	'M210,0 C120,64 470,70 320,150',
+	'M335,0 C420,60 190,66 320,150',
+	'M430,0 C540,64 180,58 320,150',
+	'M520,0 C430,96 230,22 320,150',
+	'M615,0 C560,64 130,44 320,150',
+];
+const ORDER = [80, 200, 320, 440, 560];
+---
+
+<section class="full divider" aria-label="Cierre">
+	<div class="full-bg" aria-hidden="true"><SectionBackground client:load kind="lluvia" /></div>
+	<div class="divider-in" data-reveal>
+		<!-- Arriba: hilos enredados que se juntan en uno. Abajo: ese hilo se abre en pasos ordenados. -->
+		<svg class="weave" viewBox="0 0 640 150" aria-hidden="true">
+			<defs>
+				<linearGradient id="weave-in" x1="0" y1="0" x2="0" y2="150" gradientUnits="userSpaceOnUse">
+					<stop offset="0" stop-color="#fff" stop-opacity="0"></stop>
+					<stop offset="0.45" stop-color="#e2e8f0" stop-opacity="0.75"></stop>
+					<stop offset="1" stop-color="#d4af37"></stop>
+				</linearGradient>
+			</defs>
+			{TANGLE.map((d, i) => (
+				<g style={`--i:${i}`}>
+					<path class="thread" d={d} stroke="url(#weave-in)"></path>
+					<path class="spark" d={d} pathLength="100"></path>
+				</g>
+			))}
+		</svg>
+
+		<div class="stack">
+			<p class="stack-back" data-divider-back>Cada empresa tiene un proceso <br /> que se puede hacer mejor.</p>
+			<h2 class="stack-front">Empecemos por <span>el tuyo</span>.</h2>
+		</div>
+
+		<svg class="weave" viewBox="0 0 640 150" aria-hidden="true">
+			<defs>
+				<linearGradient id="weave-out" x1="0" y1="0" x2="0" y2="150" gradientUnits="userSpaceOnUse">
+					<stop offset="0" stop-color="#d4af37"></stop>
+					<stop offset="1" stop-color="#f6ebc4" stop-opacity="0.35"></stop>
+				</linearGradient>
+			</defs>
+			{ORDER.map((x, i) => {
+				const d = `M320,0 C320,70 ${x},40 ${x},128`;
+				return (
+					<g style={`--i:${i}`}>
+						<path class="thread" d={d} stroke="url(#weave-out)"></path>
+						<path class="spark" d={d} pathLength="100"></path>
+						<circle class="knot" cx={x} cy="134" r="5"></circle>
+					</g>
+				);
+			})}
+		</svg>
+	</div>
+
+	<div class="belt" aria-hidden="true">
+		<div class="belt-track">
+			{[0, 1].map(() => (
+				<ul>{WORDS.map((w) => <li>{w}</li>)}</ul>
+			))}
+		</div>
+	</div>
+</section>
+
+<style>
+	.divider {
+		overflow: clip;
+		text-align: center;
+	}
+
+	.divider-in {
+		display: grid;
+		justify-items: center;
+		gap: clamp(0.8rem, 2.5vh, 1.8rem);
+		padding-inline: var(--gutter);
+		padding-bottom: 4.5rem;
+	}
+
+	/* ---- hilos ---- */
+	.weave {
+		width: min(640px, 88vw);
+		height: auto;
+		max-height: 19vh;
+		overflow: visible;
+	}
+
+	.thread,
+	.spark {
+		fill: none;
+		stroke-width: 1.4;
+		stroke-linecap: round;
+	}
+
+	.thread {
+		stroke-width: 1.2;
+	}
+
+	/* Un pulso de luz recorre cada hilo. */
+	.spark {
+		stroke: var(--nx-gold-100);
+		stroke-width: 2.2;
+		stroke-dasharray: 7 193;
+		stroke-dashoffset: 8;
+		animation: weave-run 4.2s cubic-bezier(0.5, 0, 0.4, 1) infinite;
+		animation-delay: calc(var(--i) * 0.37s);
+	}
+
+	.knot {
+		fill: var(--nx-ink);
+		stroke: var(--accent);
+		stroke-width: 1.6;
+		animation: weave-knot 4.2s var(--ease) infinite;
+		animation-delay: calc(var(--i) * 0.37s);
+	}
+
+	@keyframes weave-run {
+		0% { stroke-dashoffset: 8; }
+		70%, 100% { stroke-dashoffset: -100; }
+	}
+
+	@keyframes weave-knot {
+		0%, 58% { fill: var(--nx-ink); }
+		68%, 80% { fill: var(--nx-gold-300); }
+		100% { fill: var(--nx-ink); }
+	}
+
+	/* ---- un texto detrás de otro ---- */
+	.stack {
+		position: relative;
+		display: grid;
+		justify-items: center;
+		font-family: var(--font-display);
+		text-wrap: balance;
+	}
+
+	/* Detrás: la frase completa, grande y en vidrio, que se apaga hacia abajo. */
+	.stack-back {
+		font-weight: 800;
+		font-size: clamp(1.7rem, 5.2vw, 5.6rem);
+		letter-spacing: -0.045em;
+		line-height: 1.02;
+		background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.26));
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+		padding-bottom: 0.2em;
+	}
+
+	/* Delante: muerde la base de la frase de atrás y le proyecta sombra. */
+	.stack-front {
+		position: relative;
+		z-index: 1;
+		margin-top: -0.3em;
+		font-weight: 800;
+		font-size: clamp(2.7rem, 7.6vw, 8.4rem);
+		letter-spacing: -0.055em;
+		line-height: 1;
+		color: var(--nx-paper);
+		filter: drop-shadow(0 -6px 10px rgba(0, 0, 0, 0.85)) drop-shadow(0 12px 28px rgba(0, 0, 0, 0.8));
+	}
+
+	.stack-front span {
+		padding-right: 0.06em;
+		margin-right: -0.06em;
+		background: linear-gradient(100deg, var(--nx-gold-500), var(--nx-gold-300) 55%, var(--nx-gold-500));
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	@media (max-width: 599px) {
+		.stack-back br {
+			display: none;
+		}
+	}
+
+	/* Cinta de palabras que se desplaza despacio; se detiene al pasar el cursor. */
+	.belt {
+		position: absolute;
+		inset: auto 0 0;
+		padding-block: 1rem;
+		border-block: 1px solid var(--border);
+		-webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+		mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+		overflow: hidden;
+	}
+
+	.belt-track {
+		display: flex;
+		width: max-content;
+		animation: belt-run 38s linear infinite;
+	}
+
+	.belt:hover .belt-track {
+		animation-play-state: paused;
+	}
+
+	.belt ul {
+		display: flex;
+		flex: none;
+		list-style: none;
+	}
+
+	.belt li {
+		display: flex;
+		align-items: center;
+		white-space: nowrap;
+		padding-inline: 1.4rem;
+		font-family: var(--font-display);
+		font-weight: 700;
+		font-size: clamp(1rem, 2vw, 1.4rem);
+		letter-spacing: -0.02em;
+		color: var(--foreground-muted);
+	}
+
+	.belt li::after {
+		content: '';
+		width: 7px;
+		height: 7px;
+		margin-left: 2.8rem;
+		border-radius: 50%;
+		background: var(--accent);
+	}
+
+	@keyframes belt-run {
+		to { transform: translateX(-50%); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.belt-track,
+		.spark,
+		.knot {
+			animation: none;
+		}
+	}
+</style>

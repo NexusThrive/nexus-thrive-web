@@ -106,6 +106,53 @@ video {
   color: var(--primary-foreground);
 }
 
+/* ---------- Superficies Soft Enterprise ---------- */
+
+/* Tarjeta de tablero (Widget): blanca, borde sutil, radio 24, sombra solo al elevarse. */
+.widget {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-widget);
+  background: var(--surface);
+  box-shadow: var(--nx-shadow-xs);
+  transition: box-shadow var(--d3) var(--ease), transform var(--d3) var(--nx-ease-out), border-color var(--d3) var(--ease);
+}
+
+/* El elemento enfocado no se mueve (se escaparía del puntero): sube su icono, y la tarjeta solo gana sombra. */
+.widget--lift:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--nx-shadow-md);
+}
+
+.widget--lift:hover .icon-tile {
+  transform: translateY(-2px);
+}
+
+/* Vidrio: solo en lo que flota (barra, caja de Auri). */
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: saturate(160%) blur(12px);
+  backdrop-filter: saturate(160%) blur(12px);
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+}
+
+/* Tile de icono, como el de las acciones rápidas del dashboard. */
+.icon-tile {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--surface-muted);
+  color: var(--foreground);
+  transition: transform var(--d2) var(--nx-ease-out);
+}
+
+.icon-tile--gold {
+  background: var(--accent-subtle);
+  color: var(--accent-text);
+}
+
 /* ---------- Estructura ---------- */
 
 .container {
@@ -159,11 +206,12 @@ video {
 }
 
 .title-lg {
-  font-size: clamp(2rem, 5vw, 3.6rem);
+  font-size: clamp(1.7rem, 3.1vw, 2.7rem);
+  line-height: 1.08;
 }
 
 .title-md {
-  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  font-size: clamp(1.1rem, 1.7vw, 1.3rem);
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
@@ -176,16 +224,10 @@ video {
   text-wrap: pretty;
 }
 
-/* Palabra resaltada: bloque oro con texto negro (regla de marca: los
-   bloques dorados llevan texto negro). */
+/* Palabra resaltada: oro como texto, igual que el nombre en el saludo del
+   dashboard de la app. */
 .mark {
-  display: inline-block;
-  padding: 0 0.14em 0.04em;
-  margin: 0 -0.02em;
-  background: var(--accent);
-  color: var(--nx-ink);
-  border-radius: var(--radius-sm);
-  line-height: 1;
+  color: var(--accent-display);
 }
 
 /* ---------- Botones ---------- */
@@ -197,9 +239,9 @@ video {
   justify-content: center;
   gap: 0.55rem;
   min-height: 48px;
-  padding: 0 1.35rem;
+  padding: 0 1.5rem;
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: 999px;
   font-family: var(--font-sans);
   font-size: 0.95rem;
   font-weight: 600;
@@ -243,14 +285,21 @@ video {
 }
 
 .btn--outline {
-  border-color: var(--border-strong);
+  border-color: var(--border);
   color: var(--foreground);
-  background: transparent;
+  background: var(--surface);
+  box-shadow: var(--nx-shadow-xs);
 }
 
 .btn--outline:hover {
-  border-color: var(--foreground);
+  border-color: var(--border-strong);
+  background: var(--surface-muted);
   color: var(--foreground);
+}
+
+.btn--primary:hover,
+.btn--accent:hover {
+  box-shadow: var(--nx-shadow-sm);
 }
 
 .btn--sm {
@@ -266,7 +315,7 @@ video {
   align-items: center;
   gap: 0.45rem;
   padding: 0.22rem 0.55rem;
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 500;
@@ -297,30 +346,7 @@ video {
   background: var(--foreground-muted);
 }
 
-/* ---------- Revelado al hacer scroll ----------
-   Sin JavaScript (o sin soporte) todo se ve: la clase `js` la pone el
-   <head> y el observador marca `.is-in`. Solo transform y opacity: sin
-   saltos de layout. */
-
-.js [data-reveal] {
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity var(--d4) var(--nx-ease-out), transform var(--d4) var(--nx-ease-out);
-  transition-delay: var(--reveal-delay, 0ms);
-}
-
-.js [data-reveal].is-in {
-  opacity: 1;
-  transform: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .js [data-reveal] {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-
   *,
   *::before,
   *::after {
@@ -328,4 +354,285 @@ video {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+
+  /* Sin movimiento no se pierde información: las barras, el flujo y los pasos se ven en su estado final. */
+  .f-bar i,
+  .flow-line i,
+  .big-rule i {
+    transform: none !important;
+  }
+
+  .flow-step .flow-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--nx-ink);
+  }
+
+  .step {
+    opacity: 1 !important;
+    min-height: 0 !important;
+  }
+}
+
+/* Marcadores de contenido pendiente ([COMPLETAR: …]). Visibles a propósito. */
+mark.todo {
+  padding: 0 0.3em;
+  border: 1px dashed var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--accent-subtle);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+/* ---------- Scroll suave (Lenis) ---------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* ---------- Progreso de lectura ---------- */
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 120;
+  height: 2px;
+  pointer-events: none;
+}
+
+.scroll-progress i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* ---------- Pantalla de carga ---------- */
+.preloader {
+  display: none;
+}
+
+html.preloading {
+  overflow: hidden;
+}
+
+html.preloading .preloader,
+.preloader.is-done {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  color: var(--foreground);
+}
+
+.pl-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50.5%;
+  background: var(--background);
+  transition: transform 700ms cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+.pl-panel--top {
+  top: 0;
+}
+
+.pl-panel--bottom {
+  bottom: 0;
+}
+
+/* Rejilla de puntos de fondo: aparece rápido desde el centro y reacciona al cursor. */
+.pl-grid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, #000 35%, transparent 100%);
+  mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, #000 35%, transparent 100%);
+}
+
+/* Halo dorado suave detrás del logo. */
+.pl-stage::before {
+  content: "";
+  position: absolute;
+  inset: -30% -20%;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(212, 175, 55, 0.2), transparent 70%);
+}
+
+.pl-stage {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 2rem;
+  padding: 1rem;
+  will-change: transform, opacity;
+}
+
+/* El logo (N + THRIVE) se dibuja con puntos redondos; el tamaño lo fija el script (máx. 340 px o el 66 % de la pantalla). */
+.pl-logo {
+  position: relative;
+}
+
+.pl-dots {
+  display: block;
+  max-width: 100%;
+}
+
+.pl-svg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  opacity: 0;
+  color: var(--foreground);
+}
+
+.pl-skip {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--foreground-muted);
+  font: 600 0.85rem/1 var(--font-sans);
+  cursor: pointer;
+  transition: color var(--d2) var(--ease), border-color var(--d2) var(--ease);
+}
+
+.pl-skip:hover {
+  color: var(--foreground);
+  border-color: var(--border-strong);
+}
+
+.preloader.is-done {
+  pointer-events: none;
+}
+
+.preloader.is-done .pl-panel--top {
+  transform: translateY(-101%);
+}
+
+.preloader.is-done .pl-panel--bottom {
+  transform: translateY(101%);
+}
+
+/* ---------- View Transition de la pantalla de carga ---------- */
+::view-transition-group(root) {
+  animation-duration: 800ms;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation-duration: 800ms;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.25, 1);
+  animation-fill-mode: both;
+}
+
+::view-transition-old(root) {
+  animation-name: pl-vt-out;
+}
+
+::view-transition-new(root) {
+  animation-name: pl-vt-in;
+}
+
+@keyframes pl-vt-out {
+  to { opacity: 0; transform: scale(1.06); filter: blur(12px); }
+}
+
+@keyframes pl-vt-in {
+  from { opacity: 0; transform: scale(0.985); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 1ms;
+  }
+}
+
+/* Mientras dura la transición de la carga, el navegador no debe capturar los clics. */
+html::view-transition {
+  pointer-events: none;
+}
+
+/* ---------- Secciones a pantalla completa ----------
+   Cada sección ocupa al menos el alto de la ventana, con su fondo animado a sangre. Dentro, las superficies
+   y los bordes de siempre pasan a ser vidrio: se redefinen los tokens y todo lo que los usa los hereda. */
+.full {
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-muted: rgba(255, 255, 255, 0.05);
+  --border: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.26);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-block: clamp(3rem, 8vh, 5.5rem);
+  background: var(--nx-ink);
+  overflow-x: clip;
+}
+
+.full-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+}
+
+/* Vidrio líquido: tinte translúcido, borde de luz y reflejo especular arriba a la izquierda. */
+.full .glass-lg.glass-lg {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background:
+    radial-gradient(70% 90% at 6% 0%, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 65%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 45%, rgba(255, 255, 255, 0.06) 100%),
+    rgba(10, 10, 11, 0.42);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  backdrop-filter: blur(14px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 22px rgba(255, 255, 255, 0.04),
+    0 14px 34px -14px rgba(0, 0, 0, 0.75);
+}
+
+.full .icon-tile.icon-tile {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.05) 60%, rgba(255, 255, 255, 0.12));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 4px 12px -5px rgba(0, 0, 0, 0.6);
+  color: var(--nx-white);
+}
+
+.full[id] {
+  scroll-margin-top: 0;
+}
+
+/* Fondos cuya luz nace arriba: el fundido superior es corto para no taparla. */
+.full-bg--top {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 4%, #000 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 4%, #000 70%, transparent);
 }
